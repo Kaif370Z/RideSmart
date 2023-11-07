@@ -1,0 +1,7 @@
+{
+  "name": "RideSmart",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
