@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "ridesmart-c1c47": {
+      "hosting": {
+        "app": [
+          "ridesmart-c1c47"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "ridesmart-c1c47"
+  }
+}
