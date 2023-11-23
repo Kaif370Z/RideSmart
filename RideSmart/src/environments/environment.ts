@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  firebase : {
+  firebase: {
   apiKey: "AIzaSyC1MaVIpVs6ZDoOz3S2MkVLyQXq_ohJjfI",
   authDomain: "ridesmart-c1c47.firebaseapp.com",
   projectId: "ridesmart-c1c47",
