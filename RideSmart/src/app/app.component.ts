@@ -20,4 +20,5 @@ export class AppComponent {
     const coordinates = await Geolocation.getCurrentPosition();
     console.log('Current position:', coordinates);
   };
+  
 }
