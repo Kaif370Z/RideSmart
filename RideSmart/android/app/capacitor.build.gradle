@@ -10,10 +10,7 @@ android {
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
     implementation project(':capacitor-app')
-<<<<<<< HEAD
     implementation project(':capacitor-geolocation')
-=======
->>>>>>> aa8ea3cededa8abc70ae133e32e8ef42a83423d6
     implementation project(':capacitor-haptics')
     implementation project(':capacitor-keyboard')
     implementation project(':capacitor-status-bar')
