@@ -23,9 +23,13 @@
       <div style="font-size: 60px;">
         49°
         <h6> angle scale here</h6>
-        
       </div>
-      <ion-button >Default</ion-button>
+      <div full> <h5> X: {{x}}</h5></div>
+      <div full> <h5> Y: {{y}}</h5></div>
+      <div full> <h5> Z: {{z}}</h5></div>
+      <div full> <h5> TimeStamp: {{timestamp}}</h5></div>
+      <ion-button expand="block" (click)="start()">Start</ion-button>
+      <ion-button expand="block" (click)="stop()">Stop</ion-button>
     </ion-card-content>
   </ion-card>
 

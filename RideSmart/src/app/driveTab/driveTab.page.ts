@@ -4,6 +4,7 @@ import { PluginListenerHandle } from '@capacitor/core';
 import { Motion } from '@capacitor/motion';
 
 import { DeviceMotion, DeviceMotionAccelerationData, DeviceMotionAccelerometerOptions } from '@ionic-native/device-motion/ngx';
+import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope/ngx';
 
 @Component({
   selector: 'driveTab',
@@ -55,7 +56,7 @@ start()
 
 stop()
 {
-
+  this.id.unsubscribe();
 }
 
 

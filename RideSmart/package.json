@@ -31,6 +31,7 @@
     "@capacitor/motion": "^5.0.6",
     "@capacitor/status-bar": "5.0.6",
     "@ionic-native/device-motion": "^5.36.0",
+    "@ionic-native/gyroscope": "^5.36.0",
     "@ionic/angular": "^7.0.0",
     "cordova-plugin-device-motion": "^2.0.1",
     "firebase": "^10.6.0",
