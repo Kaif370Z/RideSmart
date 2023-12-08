@@ -7,21 +7,6 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-
-  <ion-card>
-    <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
-    <ion-card-header>
-      <ion-card-title>Card Title</ion-card-title>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-    </ion-card-header>
-  
-    <ion-card-content>
-      Here's a small text description for the card content. Nothing more, nothing less.
-    </ion-card-content>
-  </ion-card>
-
-  <ion-button expand="full" >Start Acceleration</ion-button>
-  <ion-button expand="full" >Stop Acceleration</ion-button>
-
+  <ion-button expand="block" (click)="getCurrentLocation()">Enable Geolocation</ion-button>
 </ion-content>
 
