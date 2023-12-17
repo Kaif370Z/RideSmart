@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Geolocation, GeolocationPluginPermissions } from '@capacitor/geolocation';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
