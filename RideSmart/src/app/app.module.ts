@@ -14,11 +14,25 @@ import { environment } from 'src/environments/environment';
 
 import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion/ngx';
 import { Gyroscope } from '@ionic-native/gyroscope/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx'; // Add Geolocation import here
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, provideFirebaseApp(() => initializeApp(environment.firebase)), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideStorage(() => getStorage())],
-  providers: [DeviceMotion,Gyroscope,{ provide: RouteReuseStrategy,useClass: IonicRouteStrategy }],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage())
+  ],
+  providers: [
+    DeviceMotion,
+    Gyroscope,
+    Geolocation, // Add Geolocation provider here
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

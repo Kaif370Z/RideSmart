@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { maintenanceTabPage } from './maintenanceTab.page';
-import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
-
+import { ExploreContainerComponentModule } from '../explore-container/explore-container.module'; 
+import { Storage } from '@ionic/storage';
 import { maintenanceTabPageRoutingModule } from './maintenanceTab-routing.module';
 
 @NgModule({
@@ -15,6 +15,12 @@ import { maintenanceTabPageRoutingModule } from './maintenanceTab-routing.module
     ExploreContainerComponentModule,
     maintenanceTabPageRoutingModule
   ],
-  declarations: [maintenanceTabPage]
+  declarations: [maintenanceTabPage],
+  providers: [
+    Storage
+  ]
 })
-export class maintenanceTabPageModule {}
+export class maintenanceTabPageModule {
+
+  constructor(private storage: Storage) {}
+}
