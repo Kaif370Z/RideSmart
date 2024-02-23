@@ -70,26 +70,16 @@ export class driveTabPage {
   }
 
   startGyro() {
-    this.platform.ready().then(() => {
-      try {
-        this.gyroscope.getCurrent().then((orientation: GyroscopeOrientation) => {
-          // Assigning data from device sensors to local variables
-          this.gx = "" + orientation.x;
-          this.gy = "" + orientation.y;
-          this.gz = "" + orientation.z;
-          this.gtimestamp = "" + orientation.timestamp;
-        }).catch((error) => {
-          console.error('Error getting gyroscope data:', error);
-          alert('Error ' + error);
-        });
-      } catch (error) {
-        console.error('Error starting gyroscope:', error);
-        alert('Error ' + error);
-      }
+    let options: GyroscopeOptions = { frequency: 1000 }; // Set frequency to 1000ms (1 second)
+    this.gid = this.gyroscope.watch(options).subscribe((orientation: GyroscopeOrientation) => {
+      this.gx = "" + orientation.x;
+      this.gy = "" + orientation.y;
+      this.gz = "" + orientation.z;
+      this.gtimestamp = "" + orientation.timestamp;
     });
   }
 
-  stopGyro(){
+  stopGyro() {
     this.gid.unsubscribe();
   }
 
