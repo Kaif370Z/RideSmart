@@ -3,6 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { PluginListenerHandle } from '@capacitor/core';
 import { Motion } from '@capacitor/motion';
 import { Platform } from '@ionic/angular';
+import { Geolocation } from '@capacitor/geolocation';
 
 import { DeviceMotion, DeviceMotionAccelerationData, DeviceMotionAccelerometerOptions } from '@ionic-native/device-motion/ngx';
 import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope/ngx';
@@ -13,6 +14,8 @@ import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native
   styleUrls: ['driveTab.page.scss']
 })
 export class driveTabPage {
+
+  public currentSpeed: number | null = null;
 
   x: string;
   y: string;
@@ -124,6 +127,29 @@ export class driveTabPage {
     
       return 90 - leanAngleDegrees;
   }
+
+
+  //tracking speed using geolocation api
+  async startTrackingSpeed() {
+    const watchOptions = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    Geolocation.watchPosition(watchOptions, (position, err) => {
+      if (position) {
+        this.currentSpeed = position.coords.speed;
+      } else if (err) {
+        console.error("speed tracker error:", err);
+      }
+    });
+  }
+
+  get currentSpeedKmH(): number | null {
+    return this.currentSpeed !== null ? this.currentSpeed * 3.6 : null;
+  }
+
 }
 
 
