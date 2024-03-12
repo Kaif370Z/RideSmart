@@ -1,12 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
+import { Auth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private auth: Auth) { }
+  //BehaviourSubject keeps track of current user
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  //update when auth state changes
+  public currentUser = this.currentUserSubject.asObservable();
+
+  constructor(private auth: Auth) {
+
+    //listening for changes on user
+    onAuthStateChanged(this.auth, (user) => {
+      this.currentUserSubject.next(user);
+    });
+
+   }
 
   async register ({ email, password }: { email: string; password: string }) {
     try {

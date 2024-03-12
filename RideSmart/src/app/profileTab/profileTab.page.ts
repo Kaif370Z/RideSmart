@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-profileTab',
@@ -11,6 +12,8 @@ import { Router } from '@angular/router';
 })
 export class profileTabPage implements OnInit {
   credentials: FormGroup;
+
+  user: User | null = null;
 
   constructor(
 
@@ -36,7 +39,9 @@ export class profileTabPage implements OnInit {
   }
 
   ngOnInit() {
-    
+    this.authService.currentUser.subscribe((user) => {
+      this.user = user;
+    });
   }
 
   async register() {

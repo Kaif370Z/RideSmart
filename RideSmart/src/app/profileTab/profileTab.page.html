@@ -7,6 +7,10 @@
   </ion-header>
   
 <ion-content class="ion-padding">
+  <ng-container *ngIf="user">
+    <p>Email: {{ user.email }}</p>
+  </ng-container>
+  
   <form [formGroup]="credentials" (ngSubmit)="login()">
 
     <ion-item fill="solid" class="ion-margin-bottom">
