@@ -1,0 +1,25 @@
+ion-button {
+    --background: red;
+    --background-activated: purple;
+    --border-color: white !important;
+}
+
+ion-loading {
+  
+    --spinner-color: red; 
+  }
+  
+  .welcome-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 20px 0; /* Adjust margins as needed */
+  }
+  
+  .welcome-box h2,
+  .welcome-box p {
+    margin: 0; /* Removes default margins */
+    padding: 5px; /* Adds a little space around the text */
+  }
