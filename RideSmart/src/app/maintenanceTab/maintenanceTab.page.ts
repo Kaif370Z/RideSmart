@@ -2,9 +2,19 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AlertController, NavController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
-import { Storage } from '@ionic/storage';
+import { Storage } from '@ionic/storage-angular';
 
-declare var google: { maps: { MapTypeId: { ROADMAP: any; }; Map: new (arg0: any, arg1: { zoom: number; mapTypeId: any; mapTypeControl: boolean; streetViewControl: boolean; fullscreenControl: boolean; }) => any; LatLng: new (arg0: number, arg1: number) => any; }; };
+declare var google: {
+  maps: {
+    MapTypeId: { ROADMAP: any; };
+    Map: new (arg0: any, arg1: { zoom: number; mapTypeId: any; mapTypeControl: boolean; streetViewControl: boolean; fullscreenControl: boolean; }) => any;
+    LatLng: new (arg0: number, arg1: number) => any;
+    Polyline: new (arg0: { path: any[]; geodesic: boolean; strokeColor: string; strokeOpacity: number; strokeWeight: number; }) => any;
+  };
+};
+
+
+//declare var google: { maps: { MapTypeId: { ROADMAP: any; }; Map: new (arg0: any, arg1: { zoom: number; mapTypeId: any; mapTypeControl: boolean; streetViewControl: boolean; fullscreenControl: boolean; }) => any; LatLng: new (arg0: number, arg1: number) => any; }; Polyline: new (arg0: { path: any[]; geodesic: boolean; strokeColor: string; strokeOpacity: number; strokeWeight: number; }) => any; };
 
 @Component({
   selector: 'app-maintenanceTab',
@@ -17,6 +27,7 @@ export class maintenanceTabPage {
   @ViewChild('mapElement') mapElement!: ElementRef;
   map: any;
   currentMapTrack: any = null;
+  watchId: string | null = null;
 
   isTracking = false;
   trackedRoute: Array<{ lat: number; lng: number; }> = [];
@@ -26,26 +37,19 @@ export class maintenanceTabPage {
   positionSubscription!: Subscription;
 
   constructor(public navCtrl: NavController, 
+
     private plt: Platform, 
     private geolocation: Geolocation,
-   private storage: Storage, 
-   private alertCtrl: AlertController ) {}
+    private storage: Storage, 
+    private alertCtrl: AlertController ) {
+      this.storage.create();
+    }
 
    
-/*
-   async getCurrentLocation() {
-    try {
-      const position = await Geolocation.getCurrentPosition();
-      console.log(position.coords.latitude, position.coords.longitude);
-    } catch (e) {
-      console.error('Error getting location', e);
-    }
-  }*/
-  
 
   async ngAfterViewInit() {
     this.plt.ready().then(async () => {
-    //  this.loadHistoricRoutes();
+    // this.loadHistoricRoutes();
 
       let mapOptions = {
         zoom: 13,
@@ -81,7 +85,6 @@ showHistoryRoute(path: Array<{ lat: number; lng: number; }>) {
   this.redrawPath(path);
 }
 
-watchId: string | null = null;
 
 startTracking() {
   this.isTracking = true;
@@ -96,8 +99,10 @@ startTracking() {
   // Correctly handle the promise to extract the watch ID string
   Geolocation.watchPosition(watchOptions, (position, err) => {
     if (position) {
+      this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });
+      this.saveRoute();
       //this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });
-    //  this.redrawPath(this.trackedRoute);
+      this.redrawPath(this.trackedRoute);
     console.log(position.coords.latitude, position.coords.longitude);
     } else if (err) {
       console.error('Error watching position:', err);
@@ -110,11 +115,32 @@ startTracking() {
   });
 }
 
+async saveRoute() {
+  await this.storage.set('trackedRoute', this.trackedRoute);
+}
+
+async getSavedRoute() {
+  return await this.storage.get('trackedRoute');
+}
 
 
-
-redrawPath(route: { lat: number; lng: number; }[]) {
+redrawPath(path: { lat: number; lng: number; }[]) {
   // Implementation of redrawPath method
+  if (this.currentMapTrack) {
+    this.currentMapTrack.setMap(null);
+  }
+
+  if (path.length > 1) {
+    this.currentMapTrack = new google.maps.Polyline({
+      path: path,
+      geodesic: true,
+      strokeColor: '#ff00ff',
+      strokeOpacity: 1.0,
+      strokeWeight: 3
+    });
+    this.currentMapTrack.setMap(this.map);
+  }
+
   }
 
   stopTracking() {
@@ -122,6 +148,7 @@ redrawPath(route: { lat: number; lng: number; }[]) {
       Geolocation.clearWatch({ id: this.watchId });
       this.isTracking = false;
       this.watchId = null; // Reset watchId after stopping the tracking
+      console.log("Stopped tracking");
     }
   }
   
