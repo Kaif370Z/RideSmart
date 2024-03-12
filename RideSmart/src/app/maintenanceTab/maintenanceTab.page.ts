@@ -49,7 +49,7 @@ export class maintenanceTabPage {
 
   async ngAfterViewInit() {
     this.plt.ready().then(async () => {
-    // this.loadHistoricRoutes();
+     this.loadHistoricRoutes();
 
       let mapOptions = {
         zoom: 13,
@@ -73,13 +73,13 @@ export class maintenanceTabPage {
   }
   
 
-/*loadHistoricRoutes() {
+loadHistoricRoutes() {
   this.storage.get('routes').then(data => {
     if(data) {
       this.previousTracks = data;
     }
   });
-}*/
+}
 
 showHistoryRoute(path: Array<{ lat: number; lng: number; }>) {
   this.redrawPath(path);
@@ -144,13 +144,23 @@ redrawPath(path: { lat: number; lng: number; }[]) {
   }
 
   stopTracking() {
+
     if (this.watchId !== null) {
       Geolocation.clearWatch({ id: this.watchId });
       this.isTracking = false;
       this.watchId = null; // Reset watchId after stopping the tracking
       console.log("Stopped tracking");
     }
-  }
+    
+    let newRoute = { finished: new Date(), path: this.trackedRoute };
+
+    this.previousTracks.push(newRoute);
+    this.storage.set('routes', this.previousTracks);
+
+    this.isTracking = false;
+    this.positionSubscription.unsubscribe();
+    this.currentMapTrack.setMap(null);
+}
   
-  
+
 }
