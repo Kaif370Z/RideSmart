@@ -6,6 +6,9 @@
   </ion-toolbar>
 </ion-header>
 
+
+
+
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -14,13 +17,15 @@
   </ion-header>
 
   <ion-content class="ion-padding">
-    <ion-button expand="block" (click)="getCurrentLocation()">Enable Geolocation</ion-button>
-  </ion-content>
+
+  
 
   <button ion-button full icon-left (click)="startTracking()" *ngIf="!isTracking">
     <ion-icon name="locate"></ion-icon>
     Start Tracking
   </button>
+
+  <div #mapElement style="height: 60%;"></div>
 
   <button ion-button full icon-left (click)="stopTracking()" *ngIf="isTracking">
     <ion-icon name="hand"></ion-icon>
@@ -36,5 +41,7 @@
       <button ion-button clear item-end (click)="showHistoryRoute(route.path)">View Routes</button>
     </ion-item>
   </ion-list>
+</ion-content>
 
 </ion-content>
+

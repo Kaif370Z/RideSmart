@@ -13,7 +13,8 @@ declare var google: { maps: { MapTypeId: { ROADMAP: any; }; Map: new (arg0: any,
 })
 
 export class maintenanceTabPage {
-  @ViewChild('map') mapElement: ElementRef | undefined;
+
+  @ViewChild('mapElement') mapElement!: ElementRef;
   map: any;
   currentMapTrack: any = null;
 
@@ -31,7 +32,7 @@ export class maintenanceTabPage {
    private alertCtrl: AlertController ) {}
 
    
-
+/*
    async getCurrentLocation() {
     try {
       const position = await Geolocation.getCurrentPosition();
@@ -39,44 +40,42 @@ export class maintenanceTabPage {
     } catch (e) {
       console.error('Error getting location', e);
     }
-  }
+  }*/
   
 
-  async ionViewDidLoad() {
-    this.plt.ready().then(async () => { // Ensure this function is marked as async
-      this.loadHistoricRoutes();
-  
+  async ngAfterViewInit() {
+    this.plt.ready().then(async () => {
+    //  this.loadHistoricRoutes();
+
       let mapOptions = {
         zoom: 13,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         mapTypeControl: false,
         streetViewControl: false,
-        fullscreenControl: false
+        fullscreenControl: false,
       };
-  
-      if (this.mapElement) {
-        this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-  
-        try {
-          const pos = await Geolocation.getCurrentPosition();
-          let latLng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-          this.map.setCenter(latLng);
-          this.map.setZoom(16);
-        } catch (error) {
-          console.log('Error getting location', error);
-        }
+
+      this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+
+      try {
+        const pos = await Geolocation.getCurrentPosition();
+        let latLng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+        this.map.setCenter(latLng);
+        this.map.setZoom(16);
+      } catch (error) {
+        console.log('Error getting location', error);
       }
     });
   }
   
 
-loadHistoricRoutes() {
+/*loadHistoricRoutes() {
   this.storage.get('routes').then(data => {
     if(data) {
       this.previousTracks = data;
     }
   });
-}
+}*/
 
 showHistoryRoute(path: Array<{ lat: number; lng: number; }>) {
   this.redrawPath(path);
@@ -97,13 +96,15 @@ startTracking() {
   // Correctly handle the promise to extract the watch ID string
   Geolocation.watchPosition(watchOptions, (position, err) => {
     if (position) {
-      this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });
-      this.redrawPath(this.trackedRoute);
+      //this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });
+    //  this.redrawPath(this.trackedRoute);
+    console.log(position.coords.latitude, position.coords.longitude);
     } else if (err) {
       console.error('Error watching position:', err);
     }
+
   }).then(watchId => {
-    this.watchId = watchId; // Assign the resolved watchId to this.watchId
+    this.watchId = watchId;
   }).catch(error => {
     console.error('Error starting geolocation watch:', error);
   });
