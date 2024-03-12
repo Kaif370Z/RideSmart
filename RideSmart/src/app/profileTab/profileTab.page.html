@@ -8,21 +8,31 @@
   
 <ion-content class="ion-padding">
   <ng-container *ngIf="user">
-    <p>Email: {{ user.email }}</p>
   </ng-container>
-  
+
+  <div class="welcome-box">
+    <h2>Welcome Back!</h2>
+    <p>Please Log In</p>
+  </div>
+
   <form [formGroup]="credentials" (ngSubmit)="login()">
 
     <ion-item fill="solid" class="ion-margin-bottom">
-      <ion-input type="email" placeholder="Email" formControlName="email"></ion-input>
+      <ion-input  type="email" placeholder="Email" formControlName="email"></ion-input>
     </ion-item>
 
     <ion-item fill="solid" class="ion-margin-bottom">
-      <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
+      <ion-input  type="password" placeholder="Password" formControlName="password"></ion-input>
     </ion-item>
   
-    <ion-button expand="block" type="submit">Login</ion-button>
-    <ion-button expand="block" type="button" (click) = "register()">Create Account</ion-button>
+    <ion-button expand="block" type="submit">Log in</ion-button>
+
+    <div class="welcome-box">
+      <p>Not Registered?</p>
+      <p>Create an Account!</p>
+    </div>
+    
+    <ion-button expand="block" type="button" (click)="showRegistrationModal()">Click Here to Create an Account</ion-button>
   </form>
 </ion-content>
   

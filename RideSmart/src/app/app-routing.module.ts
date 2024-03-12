@@ -6,7 +6,11 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+  },  {
+    path: 'registration-modal',
+    loadChildren: () => import('./registration-modal/registration-modal.module').then( m => m.RegistrationModalPageModule)
   }
+
 ];
 @NgModule({
   imports: [

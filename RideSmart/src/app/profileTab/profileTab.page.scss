@@ -8,3 +8,32 @@ ion-loading {
   
     --spinner-color: red; // Set the color of the spinner
   }
+
+ 
+  .welcome-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 20px 0; /* Adjust margins as needed */
+  }
+  
+  .welcome-box h2,
+  .welcome-box p {
+    margin: 0; /* Removes default margins */
+    padding: 5px; /* Adds a little space around the text */
+  }
+
+  .centered-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    background-color: white;
+    border-radius: 8px;
+  }
