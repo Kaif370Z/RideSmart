@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Log In!
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+<ng-container *ngIf="user">
+</ng-container>
+
+<div class="welcome-box">
+  <h2>Welcome Back!</h2>
+  <p>Please Log In</p>
+</div>
+
+<form [formGroup]="credentials" (ngSubmit)="login()">
+
+  <ion-item fill="solid" class="ion-margin-bottom">
+    <ion-input  type="email" placeholder="Email" formControlName="email"></ion-input>
+  </ion-item>
+
+  <ion-item fill="solid" class="ion-margin-bottom">
+    <ion-input  type="password" placeholder="Password" formControlName="password"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" type="submit">Log in</ion-button>
+
+  <div class="welcome-box">
+    <p>Not Registered?</p>
+    <p>Create an Account!</p>
+  </div>
+  
+  <ion-button expand="block" type="button" (click)="showRegistrationModal()">Click Here to Create an Account</ion-button>
+</form>
+</ion-content>

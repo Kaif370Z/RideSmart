@@ -7,15 +7,16 @@
   </ion-header>
   
 <ion-content class="ion-padding">
-  <ng-container *ngIf="user">
+
+
+  <ng-container *ngIf="user; else loggedOut">
+    <p>Email: {{ user.email }}</p>
+
+    <ion-button expand="block" type="button" (click)="logout()">Log out</ion-button>
+    <!-- Display other user information or functionalities here -->
   </ng-container>
 
-  <div class="welcome-box">
-    <h2>Welcome Back!</h2>
-    <p>Please Log In</p>
-  </div>
-
-  <form [formGroup]="credentials" (ngSubmit)="login()">
+  <!--<form [formGroup]="credentials" (ngSubmit)="login()">
 
     <ion-item fill="solid" class="ion-margin-bottom">
       <ion-input  type="email" placeholder="Email" formControlName="email"></ion-input>
@@ -30,9 +31,19 @@
     <div class="welcome-box">
       <p>Not Registered?</p>
       <p>Create an Account!</p>
-    </div>
+    </div>-->
+
     
+    <ng-template #loggedOut>
+
+      <div class="welcome-box">
+        <h2>Welcome Back!</h2>
+        <p>Please Log In</p>
+      </div>
+
     <ion-button expand="block" type="button" (click)="showRegistrationModal()">Click Here to Create an Account</ion-button>
-  </form>
+    <ion-button expand="block" type="button" (click)="showLoginModal()">Click Here to Log In</ion-button>
+    </ng-template>
+
 </ion-content>
   

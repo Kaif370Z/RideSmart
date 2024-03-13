@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import { ModalController } from '@ionic/angular';
 import { RegistrationModalPage } from '../registration-modal/registration-modal.page';
+import { LoginModalPage } from '../login-modal/login-modal.page';
 
 @Component({
   selector: 'app-profileTab',
@@ -41,27 +42,16 @@ export class profileTabPage implements OnInit {
     return this.credentials.get('password');
   }
 
+  
+
   ngOnInit() {
     this.authService.currentUser.subscribe((user) => {
       this.user = user;
     });
+    console.log(this.user);
   }
 
-  async register() {
-    const loading = await this.loadingController.create();
-    await loading.present();
-
-    const user = await this.authService.register(this.credentials.value);
-    await loading.dismiss();
-
-    if(user){
-      this.router.navigateByUrl('/driveTab', {replaceUrl:true});
-    }
-    else{
-      this.showAlert('Registration failed', 'Please try again');
-    }
-  }
-
+  /*
   async login() {
     const loading = await this.loadingController.create();
     await loading.present();
@@ -70,16 +60,30 @@ export class profileTabPage implements OnInit {
     await loading.dismiss();
 
     if(user){
-      this.router.navigateByUrl('driveTab', {replaceUrl:true});
+      this.router.navigateByUrl('tabs/driveTab', {replaceUrl:true});
     }
     else{
       this.showAlert('Login failed', 'Credentials Incorrect. Please try again');
     }
+  }*/
+
+  async logout(){
+
+    const user = await this.authService.logout();
+    console.log("User:", this.user);
+    console.log("logged out");
   }
 
   async showRegistrationModal() {
     const modal = await this.modalController.create({
       component: RegistrationModalPage
+    });
+    return await modal.present();
+  }
+
+  async showLoginModal() {
+    const modal = await this.modalController.create({
+      component: LoginModalPage
     });
     return await modal.present();
   }
