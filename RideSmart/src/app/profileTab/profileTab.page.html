@@ -12,8 +12,18 @@
   <ng-container *ngIf="user; else loggedOut">
     <p>Email: {{ user.email }}</p>
 
+    <ion-label position="floating">Name</ion-label>
+    <ion-input [(ngModel)]="userData.name" type="text"></ion-input>
+
+    <ion-label position="floating">Age</ion-label>
+    <ion-input [(ngModel)]="userData.age" type="number"></ion-input>
+
+    <ion-label position="floating">Bike Model</ion-label>
+    <ion-input [(ngModel)]="userData.bikeModel" type="text"></ion-input>
+
+    <ion-button *ngIf="user" (click)="updateProfile()">Update Profile</ion-button>
     <ion-button expand="block" type="button" (click)="logout()">Log out</ion-button>
-    <!-- Display other user information or functionalities here -->
+   
   </ng-container>
 
   <!--<form [formGroup]="credentials" (ngSubmit)="login()">
@@ -37,12 +47,11 @@
     <ng-template #loggedOut>
 
       <div class="welcome-box">
-        <h2>Welcome Back!</h2>
-        <p>Please Log In</p>
+        <h2>Welcome to RideSmart!</h2>
+        <p>Please Log In to Continue</p>
       </div>
 
-    <ion-button expand="block" type="button" (click)="showRegistrationModal()">Click Here to Create an Account</ion-button>
-    <ion-button expand="block" type="button" (click)="showLoginModal()">Click Here to Log In</ion-button>
+    <ion-button expand="block" type="button" (click)="showLoginModal()">Log In</ion-button>
     </ng-template>
 
 </ion-content>

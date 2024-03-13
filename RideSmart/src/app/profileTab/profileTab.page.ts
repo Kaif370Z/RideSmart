@@ -7,6 +7,7 @@ import { User } from 'firebase/auth';
 import { ModalController } from '@ionic/angular';
 import { RegistrationModalPage } from '../registration-modal/registration-modal.page';
 import { LoginModalPage } from '../login-modal/login-modal.page';
+import { FirestoreService } from '../services/firestore.service';
 
 @Component({
   selector: 'app-profileTab',
@@ -18,6 +19,13 @@ export class profileTabPage implements OnInit {
 
   user: User | null = null;
 
+  userData = {
+    name: '',
+    age: '',
+    bikeModel: ''
+  };
+
+
   constructor(
 
     private fb : FormBuilder,
@@ -25,7 +33,8 @@ export class profileTabPage implements OnInit {
     private alertController: AlertController,
     private authService: AuthService,
     private router: Router,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private firestoreService: FirestoreService
   )  {
     this.credentials = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -49,6 +58,13 @@ export class profileTabPage implements OnInit {
       this.user = user;
     });
     console.log(this.user);
+  }
+
+  async updateProfile() {
+    if(this.user) {
+      await this.firestoreService.addUserDetails(this.user.uid, this.userData);
+      // success message
+    }
   }
 
   /*
