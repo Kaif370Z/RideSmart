@@ -11,17 +11,18 @@
 
   <ng-container *ngIf="user; else loggedOut">
     <p>Email: {{ user.email }}</p>
+    <p>Make: {{ userData.make }}</p>
+    <p>Model: {{ userData.model }}</p>
+    <p>Year: {{ userData.year }}</p>
+    <p>Service Type: {{ userData.part }}</p>
+    <p>Service Done Date: {{ userData.serviceDoneDate }}</p>
 
-    <ion-label position="floating">Name</ion-label>
-    <ion-input [(ngModel)]="userData.name" type="text"></ion-input>
+    <!--<ion-button *ngIf="user" (click)="updateProfile()">Update Profile</ion-button>-->
 
-    <ion-label position="floating">Age</ion-label>
-    <ion-input [(ngModel)]="userData.age" type="number"></ion-input>
 
-    <ion-label position="floating">Bike Model</ion-label>
-    <ion-input [(ngModel)]="userData.bikeModel" type="text"></ion-input>
+    <ion-button (click)="showUpdateProfileModal()">Add Bike Details</ion-button>
 
-    <ion-button *ngIf="user" (click)="updateProfile()">Update Profile</ion-button>
+
     <ion-button expand="block" type="button" (click)="logout()">Log out</ion-button>
    
   </ng-container>
