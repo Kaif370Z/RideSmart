@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import { ModalController } from '@ionic/angular';
 import { RegistrationModalPage } from '../registration-modal/registration-modal.page';
+import { UserProfileUpdateModalPage } from '../user-profile-update-modal/user-profile-update-modal.page';
 import { LoginModalPage } from '../login-modal/login-modal.page';
 import { FirestoreService } from '../services/firestore.service';
 
@@ -20,11 +21,12 @@ export class profileTabPage implements OnInit {
   user: User | null = null;
 
   userData = {
-    name: '',
-    age: '',
-    bikeModel: ''
+    make: '',
+    model: '',
+    year: '',
+    part: '',
+    serviceDoneDate: ''
   };
-
 
   constructor(
 
@@ -61,11 +63,39 @@ export class profileTabPage implements OnInit {
   }
 
   async updateProfile() {
-    if(this.user) {
-      await this.firestoreService.addUserDetails(this.user.uid, this.userData);
-      // success message
+    const loading = await this.loadingController.create({ message: 'Updating profile...' });
+    await loading.present();
+  
+    try {
+      if(this.user) {
+        await this.firestoreService.addUserDetails(this.user.uid, this.userData);
+        this.showAlert('Success', 'Profile updated successfully');
+      } else {
+        this.showAlert('Error', 'No authenticated user found');
+      }
+    } catch (error) {
+      console.error(error);
+      this.showAlert('Error', 'Failed to update profile');
+    } finally {
+      await loading.dismiss();
     }
   }
+
+  async showUpdateProfileModal() {
+    const modal = await this.modalController.create({
+      component: UserProfileUpdateModalPage,
+      componentProps: {
+        // Pass any data you need to initialize the modal with
+        'userData': this.userData
+      }
+    });
+    /*modal.onDidDismiss()
+      .then((data) => {
+        // You can do something with data returned from modal here
+      });*/
+    return await modal.present();
+  }
+
 
   /*
   async login() {

@@ -18,6 +18,10 @@ const routes: Routes = [
   {
     path: 'login-modal',
     loadChildren: () => import('./login-modal/login-modal.module').then( m => m.LoginModalPageModule)
+  },
+  {
+    path: 'user-profile-update-modal',
+    loadChildren: () => import('./user-profile-update-modal/user-profile-update-modal.module').then( m => m.UserProfileUpdateModalPageModule)
   }
 
 ];
