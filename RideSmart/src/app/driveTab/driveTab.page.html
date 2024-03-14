@@ -6,17 +6,18 @@
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content style="height: 700px">
   <!-- Scale for displaying the lean angle -->
   <div style="display: flex; justify-content: center; align-items: center; height: 100px; border: 1px solid black;">
-    <div [style.transform]="'rotateZ(' + getLeanAngle() + 'deg)'" style="width: 2px; height: 70px; background-color: red;"></div>
+    <div [style.transform]="'rotateZ(' + (-calculateLeanAngle()) + 'deg)'" [style.backgroundColor]="getArrowColor(calculateLeanAngle())" style="width: 2px; height: 70px; background-color: red;"></div>
   </div>
 
   <div class="centered">
   <!-- Displaying the lean angle in degrees -->
   <ion-item>
     <ion-label>
-      <h2>{{ getLeanAngle() | number : '1.2-2' }}°</h2>
+      <h1>{{ calculateLeanAngle() | number  : '1.0-0' }}°</h1>
     </ion-label>
   </ion-item>
 </div>
@@ -27,12 +28,13 @@
   <ion-button (click)="stopAccel();stopGyro()">Stop</ion-button>
 </div>
 
-  
+<div class="centered">
 <ion-item>
   <ion-label>
-     Current Speed: {{ currentSpeedKmH | number: '1.0-2' }} km/h
+     <h2>{{ getcurrentSpeedKmH() | number: '1.0-2' }} km/h</h2>
   </ion-label>
 </ion-item>
+</div>
 
 </ion-content>
 

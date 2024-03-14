@@ -13,7 +13,13 @@ import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native
   templateUrl: 'driveTab.page.html',
   styleUrls: ['driveTab.page.scss']
 })
+
+
+
+
 export class driveTabPage {
+
+  //https://www.youtube.com/watch?v=U7lf_E79j7Q&t=112s
 
   public currentSpeed: number | null = null;
 
@@ -57,8 +63,8 @@ export class driveTabPage {
       //How often to collect accelerometer Data
       var option: DeviceMotionAccelerometerOptions =
       {
-        //200 ms
-        frequency: 200
+        //100 ms
+        frequency: 100
       };
 
       //
@@ -107,6 +113,25 @@ export class driveTabPage {
     return this.leanAngle;
   }
 
+  
+
+  //change colour of angle scale depending on lean angle
+  getArrowColor(leanAngle: number): string {
+    if (leanAngle >= -20 && leanAngle < 20 ) {
+      return 'green';
+    } else if (leanAngle >= 20 && leanAngle < 40) {
+      return 'orange';
+    } else if (leanAngle >= 40) {
+      return 'red';
+    }else if (leanAngle >= -40 && leanAngle < -20){
+      return 'orange';
+    }else if(leanAngle < -40){
+      return 'red';
+    }
+    return 'pink'; 
+  }
+
+
   stopGyro() {
     this.gid.unsubscribe();
   }
@@ -118,14 +143,14 @@ export class driveTabPage {
       const az = parseFloat(this.z);
 
       //convert to radians
-      const leanAngleRadians = Math.atan2(ay, Math.sqrt(ax * ax + az * az));
+      const leanAngleRadians = Math.atan2(ax, Math.sqrt(ay * ay + az * az));
       
       //radians to degrees
       let leanAngleDegrees = leanAngleRadians * (180 / Math.PI);
       
       console.log("Lean Angle Degrees:", leanAngleDegrees);
     
-      return 90 - leanAngleDegrees;
+      return  leanAngleDegrees;
   }
 
 
@@ -140,18 +165,83 @@ export class driveTabPage {
     Geolocation.watchPosition(watchOptions, (position, err) => {
       if (position) {
         this.currentSpeed = position.coords.speed;
+        console.log("Current Speed:" , this.currentSpeed )
       } else if (err) {
         console.error("speed tracker error:", err);
       }
     });
   }
 
-  get currentSpeedKmH(): number | null {
+  getcurrentSpeedKmH(): number | null {
     return this.currentSpeed !== null ? this.currentSpeed * 3.6 : null;
   }
 
-}
+/*
+  UpdateGyroscopeData()
+  {
+      // Gryo data
+      double XGyro = _gyro.X;
+      double YGyro = _gyro.Y;
+      double ZGyro = _gyro.Z;
 
+      //tblXGyro.Text = "X: " + XGyro.ToString("00.00");
+      //tblYGyro.Text = "Y: " + YGyro.ToString("00.00");
+      //tblZGyro.Text = "Z: " + ZGyro.ToString("00.00");
+
+      // quaternion data
+      tblXGyro.Text = "GX: " + _quat.X.ToString("0.00");
+      tblYGyro.Text = "GY: " + _quat.Y.ToString("0.00");
+      tblZGyro.Text = "GZ: " + _quat.Z.ToString("0.00");
+      //tblQW.Text = "W: " + _quat.W.ToString("0.00");
+
+      //#region Calculate Euler Angles
+      double roll, pitch, yaw;
+      roll = -1 * Math.Atan2(2.0f * (_quat.W * _quat.X + _quat.Y * _quat.Z),
+          1.0f - 2.0f * (_quat.X * _quat.X + _quat.Y * _quat.Y));
+      roll = (roll * 180.0) / Math.PI;
+     
+      pitch = Math.Asin(2.0f * (_quat.W * _quat.Y - _quat.Z * _quat.X));
+      pitch = (pitch * 180.0) / Math.PI;
+
+      yaw = Math.Atan2(2.0f * (_quat.W * _quat.Z + _quat.X * _quat.Y),
+          1.0f - 2.0f * (_quat.Y * _quat.Y + _quat.Z * _quat.Z));
+      yaw = (yaw * 180.0f) / Math.PI;
+
+      tblQX.Text = "Pitch: " + pitch.ToString("0.00");
+      tblQY.Text = "Roll: " + roll.ToString("0.00");
+      tblQZ.Text = "Yaw: " + yaw.ToString("0.00");
+
+      //#endregion
+
+      pitchLine.X2 = (pitchLine.X1 + pitch);
+      yawLine.Y2 = yawLine.Y1 - yaw;
+      rollLine.X2 = (rollLine.X1 - roll);
+      rollLine.Y2 = (rollLine.Y1 + roll);
+
+
+      if( pitch > 0)
+      {
+          bUp = true;
+      }
+      else
+      {
+          bUp = false;
+      }
+
+      if (roll <= 0 )
+      {
+          bLeft = false;
+      }
+      else
+      {
+          bLeft = true;   // opposite to what you might think
+      }
+      _prevRoll = roll;
+  }*/
+
+
+
+}
 
 
 
