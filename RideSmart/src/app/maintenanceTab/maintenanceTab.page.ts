@@ -28,6 +28,7 @@ export class maintenanceTabPage {
   map: any;
   currentMapTrack: any = null;
   watchId: string | null = null;
+  kmh: number = 0;
 
   isTracking = false;
   trackedRoute: Array<{ lat: number; lng: number; }> = [];
@@ -92,13 +93,17 @@ startTracking() {
 
   const watchOptions = {
     enableHighAccuracy: true,
-    timeout: 5000,
+    timeout: 0,
     maximumAge: 0
   };
+
+  //https://github.com/ionic-team/capacitor-plugins/issues/538
 
   // Correctly handle the promise to extract the watch ID string
   Geolocation.watchPosition(watchOptions, (position, err) => {
     if (position) {
+      const speedInMetersPerSecond = position.coords.speed ?? 0;
+      this.kmh = speedInMetersPerSecond * 3.6;
       this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });
       this.saveRoute();
       //this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });

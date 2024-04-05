@@ -1,5 +1,5 @@
 
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { PluginListenerHandle } from '@capacitor/core';
 import { Motion } from '@capacitor/motion';
 import { Platform } from '@ionic/angular';
@@ -8,6 +8,11 @@ import { SpeedService } from '../services/speed.service';
 
 import { DeviceMotion, DeviceMotionAccelerationData, DeviceMotionAccelerometerOptions } from '@ionic-native/device-motion/ngx';
 import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope/ngx';
+
+interface Position {
+  latitude: number;
+  longitude: number;
+}
 
 @Component({
   selector: 'driveTab',
@@ -18,11 +23,18 @@ import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native
 
 
 
+
+
 export class driveTabPage {
+
 
   //https://www.youtube.com/watch?v=U7lf_E79j7Q&t=112s
 
   public currentSpeed: number | null = null;
+  public currentSpeedKmH: number = 0;
+
+  watchId: string | null = null;
+  kmh: number = 0;
 
   currentSpeedMph: number = 0;
   lat : number = 0;
@@ -61,6 +73,12 @@ export class driveTabPage {
     this.gy = "-";
     this.gz = "-";
     this.gtimestamp = "-";
+
+
+  }
+
+  ngOnInit() {
+   // this.watchSpeed(); // Start tracking when the component loads
   }
 
   startAccel() {
@@ -133,7 +151,7 @@ export class driveTabPage {
     }else if(leanAngle < -40){
       return 'red';
     }
-    return 'pink'; 
+    return 'white'; 
   }
 
 
@@ -158,95 +176,123 @@ export class driveTabPage {
       return  leanAngleDegrees;
   }
 
-
-  //tracking speed using geolocation api
-  async watchSpeed() {
-    this.speedService.startSpeedWatch((position, err) => {
-      if (position) {
-        this.currentSpeedMph = (position.coords.speed ?? 0) * 3.6;
-        this.lat = position.coords.latitude;
-      } else if (err) {
-        // Handle error
-        console.error(err);
-      }
-    });
-  }
-
-  getSpeed(){
-    return this.speed = this.currentSpeedMph;
-  }
-
-  getcurrentSpeedKmH(): number | null {
-    return this.currentSpeed !== null ? this.currentSpeed * 3.6 : null;
-  }
-
-/*
-  UpdateGyroscopeData()
-  {
-      // Gryo data
-      double XGyro = _gyro.X;
-      double YGyro = _gyro.Y;
-      double ZGyro = _gyro.Z;
-
-      //tblXGyro.Text = "X: " + XGyro.ToString("00.00");
-      //tblYGyro.Text = "Y: " + YGyro.ToString("00.00");
-      //tblZGyro.Text = "Z: " + ZGyro.ToString("00.00");
-
-      // quaternion data
-      tblXGyro.Text = "GX: " + _quat.X.ToString("0.00");
-      tblYGyro.Text = "GY: " + _quat.Y.ToString("0.00");
-      tblZGyro.Text = "GZ: " + _quat.Z.ToString("0.00");
-      //tblQW.Text = "W: " + _quat.W.ToString("0.00");
-
-      //#region Calculate Euler Angles
-      double roll, pitch, yaw;
-      roll = -1 * Math.Atan2(2.0f * (_quat.W * _quat.X + _quat.Y * _quat.Z),
-          1.0f - 2.0f * (_quat.X * _quat.X + _quat.Y * _quat.Y));
-      roll = (roll * 180.0) / Math.PI;
-     
-      pitch = Math.Asin(2.0f * (_quat.W * _quat.Y - _quat.Z * _quat.X));
-      pitch = (pitch * 180.0) / Math.PI;
-
-      yaw = Math.Atan2(2.0f * (_quat.W * _quat.Z + _quat.X * _quat.Y),
-          1.0f - 2.0f * (_quat.Y * _quat.Y + _quat.Z * _quat.Z));
-      yaw = (yaw * 180.0f) / Math.PI;
-
-      tblQX.Text = "Pitch: " + pitch.ToString("0.00");
-      tblQY.Text = "Roll: " + roll.ToString("0.00");
-      tblQZ.Text = "Yaw: " + yaw.ToString("0.00");
-
-      //#endregion
-
-      pitchLine.X2 = (pitchLine.X1 + pitch);
-      yawLine.Y2 = yawLine.Y1 - yaw;
-      rollLine.X2 = (rollLine.X1 - roll);
-      rollLine.Y2 = (rollLine.Y1 + roll);
+  
 
 
-      if( pitch > 0)
-      {
-          bUp = true;
-      }
-      else
-      {
-          bUp = false;
+ //lastPoint: Position | null = null;
+
+ lastPosition: Position | null = null;
+ movementThreshold = 10; 
+
+
+startTracking() {
+  const watchOptions = {
+    enableHighAccuracy: true,
+    timeout: 0, // Adjusted to 5000 for better accuracy over time
+    maximumAge: 0
+  };
+
+  // Threshold for treating the speed as 0 (in meters per second)
+  const speedThreshold = 0.5; // Adjust this value based on testing and requirements
+
+  Geolocation.watchPosition(watchOptions, (position, err) => {
+    if (position) {
+      let speedInMetersPerSecond = position.coords.speed ?? 0;
+
+      // Apply threshold to treat low speeds as 0
+      if (speedInMetersPerSecond < speedThreshold) {
+        speedInMetersPerSecond = 0;
       }
 
-      if (roll <= 0 )
-      {
-          bLeft = false;
+      this.kmh = speedInMetersPerSecond * 3.6;
+      console.log(this.kmh, position.coords.latitude, position.coords.longitude);
+    } else if (err) {
+      console.error('Error watching position:', err);
+    }
+  }).then(watchId => {
+    this.watchId = watchId;
+  }).catch(error => {
+    console.error('Error starting geolocation watch:', error);
+  });
+}
+
+startTracking1() {
+  const watchOptions = {
+    enableHighAccuracy: true,
+    timeout: 300, // Adjusted for better accuracy over time
+    maximumAge: 0
+  };
+
+  Geolocation.watchPosition(watchOptions, (position, err) => {
+    if (position) {
+      if (this.lastPosition) {
+        // Calculate the distance between the last and current position
+        const distance = this.calculateDistance(
+          this.lastPosition.latitude,
+          this.lastPosition.longitude,
+          position.coords.latitude,
+          position.coords.longitude
+        );
+
+        // If the distance is less than 3 meters, consider the device stationary
+        if (distance < 3) {
+          this.kmh = 0;
+        } else {
+          // Update speed normally if the distance moved is 3 meters or more
+          const speedInMetersPerSecond = position.coords.speed ?? 0;
+          this.kmh = speedInMetersPerSecond * 3.6;
+        }
+      } else {
+        // No last position, so just set the current one (first time this runs)
+        const speedInMetersPerSecond = position.coords.speed ?? 0;
+        this.kmh = speedInMetersPerSecond * 3.6;
       }
-      else
-      {
-          bLeft = true;   // opposite to what you might think
-      }
-      _prevRoll = roll;
-  }*/
+
+      // Update lastPosition with the current position for the next comparison
+      this.lastPosition = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      };
+
+      console.log(`Speed: ${this.kmh} km/h`, position.coords.latitude, position.coords.longitude);
+    } else if (err) {
+      console.error('Error watching position:', err);
+    }
+  }).then(watchId => {
+    this.watchId = watchId; // Assuming watchId is correctly typed elsewhere in your class
+  }).catch(error => {
+    console.error('Error starting geolocation watch:', error);
+  });
+}
+
+
+//Applying Haverstine Formula
+calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const earthRadiusKm = 6371;
+
+  const dLat = this.degreesToRadians(lat2 - lat1);
+  const dLon = this.degreesToRadians(lon2 - lon1);
+
+  lat1 = this.degreesToRadians(lat1);
+  lat2 = this.degreesToRadians(lat2);
+
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2); 
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+  const distance = earthRadiusKm * c;
+
+  return distance * 1000;
+}
+
+degreesToRadians(degrees: number): number {
+  return degrees * (Math.PI / 180);
+}
+
+
+
 
 
 
 }
-
-
 
 

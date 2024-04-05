@@ -6,36 +6,48 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content style="height: 700px">
-  <!-- Scale for displaying the lean angle -->
-  <div style="display: flex; justify-content: center; align-items: center; height: 100px; border: 1px solid black;">
-    <div [style.transform]="'rotateZ(' + (-calculateLeanAngle()) + 'deg)'" [style.backgroundColor]="getArrowColor(calculateLeanAngle())" style="width: 2px; height: 70px; background-color: red;"></div>
+  <div style="display: flex; justify-content: center; align-items: center; height: 200px; border: 1px solid black;">
+    <svg width="400" height="200">
+      <!-- Semi-circle Arc -->
+      <!-- Increased the radius of the arc to 100 and adjusted the start and end points -->
+      <path d="M 100,200 A 100,100 0 0,1 300,200"
+            fill="none"
+            [attr.stroke]="getArrowColor(calculateLeanAngle())"
+            stroke-width="10" />
+
+      <!-- Needle -->
+      <!-- Lengthened the needle and adjusted its position to remain centered -->
+      <line x1="200" y1="200" x2="200" y2="100"
+            [attr.transform]="'rotate(' + (-calculateLeanAngle()) + ', 200, 200)'"
+            [attr.stroke]="getArrowColor(calculateLeanAngle())"
+            stroke-width="4" />
+          
+    </svg>
   </div>
 
   <div class="centered">
-  <!-- Displaying the lean angle in degrees -->
-  <ion-item>
-    <ion-label>
-      <h1>{{ calculateLeanAngle() | number  : '1.0-0' }}°</h1>
-    </ion-label>
-  </ion-item>
-</div>
+    <!-- Displaying the lean angle in degrees -->
+    <ion-item>
+      <ion-label>
+        <h1>{{ calculateLeanAngle() | number  : '1.0-0' }}°</h1>
+        <h2>{{ kmh | number:'1.0-0' }} km/h</h2>
+        <h2>{{ lat | number }} lat </h2>
+      </ion-label>
+    </ion-item>
+  </div>
+</ion-content>
+
+
+
+<ion-content style="height: 700px">
+  <!-- Scale for displaying the lean angle -->
+
 
 <div class="centered">
   <!-- Buttons to start/stop accelerometer and gyroscope -->
-  <ion-button (click)="startAccel();startGyro()">Start</ion-button>
+  <ion-button (click)="startAccel();startGyro();startTracking1()">Start</ion-button>
   <ion-button (click)="stopAccel();stopGyro()">Stop</ion-button>
-</div>
-
-<div class="centered">
-<ion-item>
-  <ion-label>
-    <ion-button (click)="watchSpeed()">Start Speed</ion-button>
-     <h2>{{ getSpeed() | number }} mph</h2>
-     <h2>{{ lat | number }} lat </h2>
-  </ion-label>
-</ion-item>
 </div>
 
 </ion-content>

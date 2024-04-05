@@ -13,7 +13,8 @@ export class SpeedService {
  startSpeedWatch(updateCallback: WatchPositionCallback) {
   const options = {
     enableHighAccuracy: true, // Use high accuracy mode
-    timeout: 10000, // Timeout for the watch
+    timeout: 10000,
+    interval: 1000, // Timeout for the watch
     maximumAge: 0, // Accept only the freshest data
   };
 
