@@ -151,7 +151,7 @@ export class driveTabPage {
     }else if(leanAngle < -40){
       return 'red';
     }
-    return 'white'; 
+    return 'green'; 
   }
 
 
@@ -219,7 +219,7 @@ startTracking() {
 startTracking1() {
   const watchOptions = {
     enableHighAccuracy: true,
-    timeout: 300, // Adjusted for better accuracy over time
+    timeout: 0, // Adjusted for better accuracy over time
     maximumAge: 0
   };
 
@@ -235,7 +235,7 @@ startTracking1() {
         );
 
         // If the distance is less than 3 meters, consider the device stationary
-        if (distance < 3) {
+        if (distance < 0.5) {
           this.kmh = 0;
         } else {
           // Update speed normally if the distance moved is 3 meters or more
