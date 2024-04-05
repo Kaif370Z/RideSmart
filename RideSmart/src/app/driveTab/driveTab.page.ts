@@ -4,6 +4,7 @@ import { PluginListenerHandle } from '@capacitor/core';
 import { Motion } from '@capacitor/motion';
 import { Platform } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
+import { SpeedService } from '../services/speed.service';
 
 import { DeviceMotion, DeviceMotionAccelerationData, DeviceMotionAccelerometerOptions } from '@ionic-native/device-motion/ngx';
 import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope/ngx';
@@ -22,6 +23,10 @@ export class driveTabPage {
   //https://www.youtube.com/watch?v=U7lf_E79j7Q&t=112s
 
   public currentSpeed: number | null = null;
+
+  currentSpeedMph: number = 0;
+  lat : number = 0;
+  speed : number = 0;
 
   x: string;
   y: string;
@@ -46,7 +51,7 @@ export class driveTabPage {
   //time tracking for gyroscope
   lastUpdate: number = 0;
 
-  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope,private platform: Platform ) {
+  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope,private platform: Platform ,private speedService : SpeedService) {
     this.x = "-";
     this.y = "-";
     this.z = "-";
@@ -155,21 +160,20 @@ export class driveTabPage {
 
 
   //tracking speed using geolocation api
-  async startTrackingSpeed() {
-    const watchOptions = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
-    };
-
-    Geolocation.watchPosition(watchOptions, (position, err) => {
+  async watchSpeed() {
+    this.speedService.startSpeedWatch((position, err) => {
       if (position) {
-        this.currentSpeed = position.coords.speed;
-        console.log("Current Speed:" , this.currentSpeed )
+        this.currentSpeedMph = (position.coords.speed ?? 0) * 3.6;
+        this.lat = position.coords.latitude;
       } else if (err) {
-        console.error("speed tracker error:", err);
+        // Handle error
+        console.error(err);
       }
     });
+  }
+
+  getSpeed(){
+    return this.speed = this.currentSpeedMph;
   }
 
   getcurrentSpeedKmH(): number | null {

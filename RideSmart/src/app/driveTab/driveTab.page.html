@@ -31,7 +31,9 @@
 <div class="centered">
 <ion-item>
   <ion-label>
-     <h2>{{ getcurrentSpeedKmH() | number: '1.0-2' }} km/h</h2>
+    <ion-button (click)="watchSpeed()">Start Speed</ion-button>
+     <h2>{{ getSpeed() | number }} mph</h2>
+     <h2>{{ lat | number }} lat </h2>
   </ion-label>
 </ion-item>
 </div>
