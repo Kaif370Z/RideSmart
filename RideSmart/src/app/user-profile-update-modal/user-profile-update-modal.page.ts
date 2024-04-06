@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { User } from 'firebase/auth';
 import { ModalController } from '@ionic/angular';
 import { FirestoreService } from '../services/firestore.service';
+import { PhotoService } from '../services/photo.service'
 
 @Component({
   selector: 'app-user-profile-update-modal',
@@ -26,6 +27,7 @@ export class UserProfileUpdateModalPage implements OnInit {
   };
 
   constructor(
+    public photoService: PhotoService,
     private fb : FormBuilder,
     private loadingController: LoadingController,
     private alertController: AlertController,
@@ -46,6 +48,7 @@ export class UserProfileUpdateModalPage implements OnInit {
     });
     console.log(this.user);
   }
+
 
   async updateProfile() {
     const loading = await this.loadingController.create({ message: 'Updating profile...' });
@@ -68,6 +71,10 @@ export class UserProfileUpdateModalPage implements OnInit {
 
   dismissModal() {
     this.modalController.dismiss();
+  }
+
+  addPhotoToGallery() {
+    this.photoService.addNewToGallery();
   }
 
   async showAlert(header: string , message: string) {

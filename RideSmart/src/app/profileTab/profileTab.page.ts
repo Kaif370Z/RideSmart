@@ -9,6 +9,7 @@ import { RegistrationModalPage } from '../registration-modal/registration-modal.
 import { UserProfileUpdateModalPage } from '../user-profile-update-modal/user-profile-update-modal.page';
 import { LoginModalPage } from '../login-modal/login-modal.page';
 import { FirestoreService } from '../services/firestore.service';
+import { PhotoService } from '../services/photo.service'
 
 @Component({
   selector: 'app-profileTab',
@@ -29,7 +30,7 @@ export class profileTabPage implements OnInit {
   };
 
   constructor(
-
+    public photoService: PhotoService,
     private fb : FormBuilder,
     private loadingController: LoadingController,
     private alertController: AlertController,
@@ -58,8 +59,35 @@ export class profileTabPage implements OnInit {
   ngOnInit() {
     this.authService.currentUser.subscribe((user) => {
       this.user = user;
+      if (this.user) {
+        // Subscribe to user details
+        this.firestoreService.getUserDetails(this.user.uid).subscribe(
+          (userDetails) => {
+            // If userDetails exists, assign it to local userData
+            if (userDetails) {
+              this.userData = userDetails;
+            }
+          },
+          (error) => {
+            // Handle any errors here
+            console.error('Error fetching user details:', error);
+          }
+        );
+      }
     });
-    console.log(this.user);
+  }
+  
+  async fetchUserDetails() {
+    if (this.user) {
+      try {
+        const userDetails = await this.firestoreService.getUserDetails(this.user.uid).toPromise(); // Make sure getUserDetails returns an Observable
+        if (userDetails) {
+          this.userData = userDetails;
+        }
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    }
   }
 
   async updateProfile() {
