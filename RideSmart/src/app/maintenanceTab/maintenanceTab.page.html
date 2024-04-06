@@ -34,15 +34,14 @@
 
   <div #map id="map"></div>
   <h2>{{kmh | number}}</h2>
+  
   <ion-list>
     <ion-list-header>Previous Tracks</ion-list-header>
     <ion-item *ngFor="let route of previousTracks">
       {{ route.finished | date }}, {{ route.path.length }} Waypoints
       <button ion-button clear item-end (click)="showHistoryRoute(route.path)">View Routes</button>
     </ion-item>
-
   </ion-list>
-</ion-content>
 
 </ion-content>
 

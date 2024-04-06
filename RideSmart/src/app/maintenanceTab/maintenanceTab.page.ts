@@ -3,6 +3,10 @@ import { AlertController, NavController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Geolocation } from '@capacitor/geolocation';
 import { Storage } from '@ionic/storage-angular';
+import { doc, setDoc } from 'firebase/firestore';
+import { FirestoreService } from '../services/firestore.service';
+import { AuthService } from '../services/auth.service';
+import { User } from 'firebase/auth';
 
 declare var google: {
   maps: {
@@ -24,6 +28,8 @@ declare var google: {
 
 export class maintenanceTabPage {
 
+  user: User | null = null;
+
   @ViewChild('mapElement') mapElement!: ElementRef;
   map: any;
   currentMapTrack: any = null;
@@ -41,17 +47,23 @@ export class maintenanceTabPage {
 
     private plt: Platform, 
     private geolocation: Geolocation,
-    private storage: Storage, 
+    private storage: Storage,
+    private firestoreService: FirestoreService,
+    private authService: AuthService, 
     private alertCtrl: AlertController ) {
       this.storage.create();
     }
 
+    ngOnInit() {
+      this.authService.currentUser.subscribe(user => {
+        this.user = user; // Set the current user
+      });
+    }
    
 
   async ngAfterViewInit() {
     this.plt.ready().then(async () => {
      this.loadHistoricRoutes();
-
       let mapOptions = {
         zoom: 13,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -71,6 +83,7 @@ export class maintenanceTabPage {
         console.log('Error getting location', error);
       }
     });
+    
   }
   
 
@@ -85,7 +98,6 @@ loadHistoricRoutes() {
 showHistoryRoute(path: Array<{ lat: number; lng: number; }>) {
   this.redrawPath(path);
 }
-
 
 startTracking() {
   this.isTracking = true;
@@ -122,12 +134,12 @@ startTracking() {
 
 async saveRoute() {
   await this.storage.set('trackedRoute', this.trackedRoute);
+  
 }
 
 async getSavedRoute() {
   return await this.storage.get('trackedRoute');
 }
-
 
 redrawPath(path: { lat: number; lng: number; }[]) {
   // Implementation of redrawPath method
@@ -153,14 +165,19 @@ redrawPath(path: { lat: number; lng: number; }[]) {
     if (this.watchId !== null) {
       Geolocation.clearWatch({ id: this.watchId });
       this.isTracking = false;
-      this.watchId = null; // Reset watchId after stopping the tracking
+      this.watchId = null;
       console.log("Stopped tracking");
     }
     
     let newRoute = { finished: new Date(), path: this.trackedRoute };
-
     this.previousTracks.push(newRoute);
     this.storage.set('routes', this.previousTracks);
+
+    if (this.user) {
+      this.firestoreService.addRouteData(this.user.uid, newRoute)
+        .then(() => console.log("Route saved to Firestore"))
+        .catch(error => console.error("Error saving route to Firestore:", error));
+    }
 
     this.isTracking = false;
     this.positionSubscription.unsubscribe();
