@@ -22,7 +22,11 @@ const routes: Routes = [
   {
     path: 'user-profile-update-modal',
     loadChildren: () => import('./user-profile-update-modal/user-profile-update-modal.module').then( m => m.UserProfileUpdateModalPageModule)
+  },  {
+    path: 'crash-modal',
+    loadChildren: () => import('./crash-modal/crash-modal.module').then( m => m.CrashModalPageModule)
   }
+
 
 ];
 @NgModule({

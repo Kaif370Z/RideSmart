@@ -5,6 +5,7 @@ import { Motion } from '@capacitor/motion';
 import { Platform } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
 import { SpeedService } from '../services/speed.service';
+import { CrashDetectionService } from '../services/crash-detection.service';
 
 import { DeviceMotion, DeviceMotionAccelerationData, DeviceMotionAccelerometerOptions } from '@ionic-native/device-motion/ngx';
 import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope/ngx';
@@ -63,7 +64,7 @@ export class driveTabPage {
   //time tracking for gyroscope
   lastUpdate: number = 0;
 
-  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope,private platform: Platform ,private speedService : SpeedService) {
+  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope,private platform: Platform ,private speedService : SpeedService,private crashDetectionService: CrashDetectionService) {
     this.x = "-";
     this.y = "-";
     this.z = "-";
@@ -97,6 +98,8 @@ export class driveTabPage {
         this.y = "" + acc.y;
         this.z = "" + acc.z;
         this.timestamp = "" + acc.timestamp;
+
+        
       });
     }
     //catch error if any
@@ -104,6 +107,8 @@ export class driveTabPage {
       alert("Error " + error);
     }
   }
+
+
   stopAccel() {
     this.id.unsubscribe();
   }
@@ -259,7 +264,7 @@ startTracking1() {
       console.error('Error watching position:', err);
     }
   }).then(watchId => {
-    this.watchId = watchId; // Assuming watchId is correctly typed elsewhere in your class
+    this.watchId = watchId;
   }).catch(error => {
     console.error('Error starting geolocation watch:', error);
   });
@@ -287,10 +292,6 @@ calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): numbe
 degreesToRadians(degrees: number): number {
   return degrees * (Math.PI / 180);
 }
-
-
-
-
 
 
 }
