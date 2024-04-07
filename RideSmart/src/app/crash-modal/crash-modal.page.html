@@ -1,17 +1,16 @@
-<ion-header [translucent]="true">
+
+<ion-header>
   <ion-toolbar>
-    <ion-title>CrashModal</ion-title>
+    <ion-title>Crash Detected</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Crash Detected</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content class="ion-padding">
-    A crash has been detected.
-    <ion-button (click)="dismissModal()">Close</ion-button>
-  </ion-content>
+<ion-content class="ion-padding" [fullscreen]="true">
+  <div style="display: flex; flex-direction: column; height: 100%; justify-content: space-around; align-items: center;">
+    <div style="text-align: center;">
+      A crash has been detected. Please dismiss this alert before the countdown, otherwise your emergency contact will be alerted.
+    </div>
+    <h1 style="margin: 0; font-size: 68px;">{{ countdown }} s</h1>
+    <ion-button (click)="dismissModal()">Dismiss</ion-button>
+  </div>
 </ion-content>

@@ -34,7 +34,7 @@ export class driveTabPage {
   public currentSpeed: number | null = null;
   public currentSpeedKmH: number = 0;
 
-  watchId: string | null = null;
+  watchId: any | null = null;
   kmh: number = 0;
 
   currentSpeedMph: number = 0;
@@ -79,7 +79,7 @@ export class driveTabPage {
   }
 
   ngOnInit() {
-   // this.watchSpeed(); // Start tracking when the component loads
+   // this.watchSpeed(); 
   }
 
   startAccel() {
@@ -193,22 +193,23 @@ export class driveTabPage {
 startTracking() {
   const watchOptions = {
     enableHighAccuracy: true,
-    timeout: 0, // Adjusted to 5000 for better accuracy over time
+    timeout: 0, 
     maximumAge: 0
   };
 
-  // Threshold for treating the speed as 0 (in meters per second)
-  const speedThreshold = 0.5; // Adjust this value based on testing and requirements
+  //threshold for treating the speed as 0 in m/s
+  const speedThreshold = 0.5; 
 
   Geolocation.watchPosition(watchOptions, (position, err) => {
     if (position) {
       let speedInMetersPerSecond = position.coords.speed ?? 0;
 
-      // Apply threshold to treat low speeds as 0
+      //threshold to treat low speeds as 0
       if (speedInMetersPerSecond < speedThreshold) {
         speedInMetersPerSecond = 0;
       }
 
+      //convert m/s to km/h
       this.kmh = speedInMetersPerSecond * 3.6;
       console.log(this.kmh, position.coords.latitude, position.coords.longitude);
     } else if (err) {
@@ -221,10 +222,52 @@ startTracking() {
   });
 }
 
+// startTracking1() {
+//   const watchOptions = {
+//     enableHighAccuracy: true,
+//     timeout: 5000,
+//     maximumAge: 1
+//   };
+
+//   this.watchId = navigator.geolocation.watchPosition(position => {
+//     if (this.lastPosition) {
+//       // Calculate the distance between the last and current position
+//       const distance = this.calculateDistance(
+//         this.lastPosition.latitude,
+//         this.lastPosition.longitude,
+//         position.coords.latitude,
+//         position.coords.longitude
+//       );
+
+//       // Calculate time elapsed in seconds
+//       const timeElapsed = (position.timestamp - this.lastPosition.timestamp) / 1000;
+
+//       if (distance < 0.5) {
+//         this.kmh = 0;
+//       } else if (timeElapsed > 0) { 
+//         // Calculate speed in meters per second and convert to km/h
+//         const speedInMetersPerSecond = distance / timeElapsed;
+//         this.kmh = speedInMetersPerSecond * 3.6;
+//       }
+//     }
+
+//     // Update lastPosition with the current position for the next comparison
+//     this.lastPosition = {
+//       latitude: position.coords.latitude,
+//       longitude: position.coords.longitude,
+//       timestamp: position.timestamp
+//     };
+
+//     console.log(`Speed: ${this.kmh} km/h`, position.coords.latitude, position.coords.longitude);
+//   }, error => {
+//     console.error('Error watching position:', error);
+//   }, watchOptions);
+// }
+
 startTracking1() {
   const watchOptions = {
     enableHighAccuracy: true,
-    timeout: 0, // Adjusted for better accuracy over time
+    timeout: 0,
     maximumAge: 0
   };
 
@@ -239,21 +282,21 @@ startTracking1() {
           position.coords.longitude
         );
 
-        // If the distance is less than 3 meters, consider the device stationary
+        //if the distance is between last point is 0,5 consider the speed 0
         if (distance < 0.5) {
           this.kmh = 0;
         } else {
-          // Update speed normally if the distance moved is 3 meters or more
+          //update speed normally if the distance moved is 0.5 meters or more
           const speedInMetersPerSecond = position.coords.speed ?? 0;
           this.kmh = speedInMetersPerSecond * 3.6;
         }
       } else {
-        // No last position, so just set the current one (first time this runs)
+        //no last position, so just set the current one (first time this runs)
         const speedInMetersPerSecond = position.coords.speed ?? 0;
         this.kmh = speedInMetersPerSecond * 3.6;
       }
 
-      // Update lastPosition with the current position for the next comparison
+      //update lastPosition with the current position for the next comparison
       this.lastPosition = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude

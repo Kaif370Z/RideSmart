@@ -14,6 +14,6 @@ export class accelerationTabPage {
   
 
   startMonitoringCrash() {
-    this.crashDetectionService.startMonitoring();
+    this.crashDetectionService.presentCrashModal();
   }
 }

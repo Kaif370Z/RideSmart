@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { SMS } from '@ionic-native/sms/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -16,7 +16,7 @@ import { environment } from 'src/environments/environment';
 
 import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion/ngx';
 import { Gyroscope } from '@ionic-native/gyroscope/ngx';
-import { Geolocation } from '@ionic-native/geolocation/ngx'; // Add Geolocation import here
+import { Geolocation } from '@ionic-native/geolocation/ngx'; 
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,7 +35,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx'; // Add Geolocation 
   providers: [
     DeviceMotion,
     Gyroscope,
-    Geolocation, // Add Geolocation provider here
+    SMS,
+    Geolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent],
