@@ -337,7 +337,7 @@ degreesToRadians(degrees: number): number {
 }
 
 startMonitoringCrash() {
-  this.crashDetectionService.presentCrashModal();
+  this.crashDetectionService.startMonitoring();
 }
 
 
