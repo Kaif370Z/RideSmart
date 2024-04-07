@@ -231,7 +231,7 @@ startTracking() {
 
 //   this.watchId = navigator.geolocation.watchPosition(position => {
 //     if (this.lastPosition) {
-//       // Calculate the distance between the last and current position
+//      
 //       const distance = this.calculateDistance(
 //         this.lastPosition.latitude,
 //         this.lastPosition.longitude,
@@ -239,19 +239,19 @@ startTracking() {
 //         position.coords.longitude
 //       );
 
-//       // Calculate time elapsed in seconds
+//   
 //       const timeElapsed = (position.timestamp - this.lastPosition.timestamp) / 1000;
 
 //       if (distance < 0.5) {
 //         this.kmh = 0;
 //       } else if (timeElapsed > 0) { 
-//         // Calculate speed in meters per second and convert to km/h
+//   
 //         const speedInMetersPerSecond = distance / timeElapsed;
 //         this.kmh = speedInMetersPerSecond * 3.6;
 //       }
 //     }
 
-//     // Update lastPosition with the current position for the next comparison
+//    
 //     this.lastPosition = {
 //       latitude: position.coords.latitude,
 //       longitude: position.coords.longitude,
@@ -334,6 +334,10 @@ calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): numbe
 
 degreesToRadians(degrees: number): number {
   return degrees * (Math.PI / 180);
+}
+
+startMonitoringCrash() {
+  this.crashDetectionService.presentCrashModal();
 }
 
 
