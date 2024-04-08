@@ -186,13 +186,21 @@ redrawPath(path: { lat: number; lng: number; }[]) {
     this.isTracking = false;
     this.positionSubscription.unsubscribe();
     this.currentMapTrack.setMap(null);
+    this.loadUserRoutes();
 }
 
 loadUserRoutes() {
   if (!this.user) return;
-  this.firestoreService.getRoutes(this.user.uid).subscribe(routes => {
-    this.routes = routes;
-  });
+  this.firestoreService.getRoutes(this.user.uid).subscribe(
+    routes => {
+      this.routes = routes;
+      console.log(this.routes);
+    },
+    error => {
+      console.error("Error loading routes:", error);
+      // You could also display an alert or a toast to inform the user of the error.
+    }
+  );
 }
   
 
