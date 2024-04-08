@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore,  addDoc, setDoc,doc, docData } from '@angular/fire/firestore';
 import { collection, collectionData } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 
 @Injectable({
@@ -27,4 +27,12 @@ export class FirestoreService {
     const routeCollectionRef = collection(this.firestore, `users/${userId}/routes`);
     await addDoc(routeCollectionRef, routeData);
   }
+
+  getRoutes(userId: string): Observable<any[]> {
+    const routesRef = collection(this.firestore, `users/${userId}/routes`);
+    return collectionData(routesRef, { idField: 'id' }).pipe(
+      map((routes: any) => routes)
+    );
+  }
+  
 }

@@ -23,7 +23,8 @@ export class UserProfileUpdateModalPage implements OnInit {
     model: '',
     year: '',
     part: '',
-    serviceDoneDate: ''
+    serviceDoneDate: '',
+    profileImageUrl: ''
   };
 
   constructor(

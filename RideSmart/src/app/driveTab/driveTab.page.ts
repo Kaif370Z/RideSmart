@@ -267,7 +267,7 @@ startTracking() {
 startTracking1() {
   const watchOptions = {
     enableHighAccuracy: true,
-    timeout: 0,
+    timeout: 500,
     maximumAge: 0
   };
 

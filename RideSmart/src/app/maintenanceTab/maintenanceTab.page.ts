@@ -29,6 +29,7 @@ declare var google: {
 export class maintenanceTabPage {
 
   user: User | null = null;
+  routes: any[] = [];
 
   @ViewChild('mapElement') mapElement!: ElementRef;
   map: any;
@@ -56,7 +57,10 @@ export class maintenanceTabPage {
 
     ngOnInit() {
       this.authService.currentUser.subscribe(user => {
-        this.user = user; // Set the current user
+        this.user = user;
+        if (this.user) {
+          this.loadUserRoutes();
+        }
       });
     }
    
@@ -182,6 +186,13 @@ redrawPath(path: { lat: number; lng: number; }[]) {
     this.isTracking = false;
     this.positionSubscription.unsubscribe();
     this.currentMapTrack.setMap(null);
+}
+
+loadUserRoutes() {
+  if (!this.user) return;
+  this.firestoreService.getRoutes(this.user.uid).subscribe(routes => {
+    this.routes = routes;
+  });
 }
   
 
