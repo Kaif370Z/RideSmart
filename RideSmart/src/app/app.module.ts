@@ -5,6 +5,7 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SMS } from '@ionic-native/sms/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,6 +26,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
     AppRoutingModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),

@@ -3,12 +3,28 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { PluginListenerHandle } from '@capacitor/core';
 import { Motion } from '@capacitor/motion';
 import { Platform } from '@ionic/angular';
-import { Geolocation } from '@capacitor/geolocation';
+import { Geolocation, GeolocationPosition } from '@capacitor/geolocation';
 import { SpeedService } from '../services/speed.service';
 import { CrashDetectionService } from '../services/crash-detection.service';
+import { GoogleRoadsService } from '../services/google-roads.service';
 
 import { DeviceMotion, DeviceMotionAccelerationData, DeviceMotionAccelerometerOptions } from '@ionic-native/device-motion/ngx';
 import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope/ngx';
+import { HEREService } from '../services/here.service';
+
+declare var google: {
+  maps: {
+    MapTypeId: { ROADMAP: any; };
+    Map: new (arg0: any, arg1: { zoom: number; mapTypeId: any; mapTypeControl: boolean; streetViewControl: boolean; fullscreenControl: boolean; }) => any;
+    LatLng: new (arg0: number, arg1: number) => any;
+    Polyline: new (arg0: { path: any[]; geodesic: boolean; strokeColor: string; strokeOpacity: number; strokeWeight: number; }) => any;
+    geometry: {
+      spherical: {
+        computeDistanceBetween: (from: any, to: any) => number;
+      }
+    };
+  };
+};
 
 interface Position {
   latitude: number;
@@ -41,6 +57,10 @@ export class driveTabPage {
   lat : number = 0;
   speed : number = 0;
 
+  currentSpeedLimit: string = '';
+
+  public speedLimit: string = '';
+
   x: string;
   y: string;
   z: string;
@@ -64,7 +84,7 @@ export class driveTabPage {
   //time tracking for gyroscope
   lastUpdate: number = 0;
 
-  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope,private platform: Platform ,private speedService : SpeedService,private crashDetectionService: CrashDetectionService) {
+  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope,private platform: Platform ,private speedService : SpeedService,private crashDetectionService: CrashDetectionService, private googleRoadsService: GoogleRoadsService, private hereService: HEREService) {
     this.x = "-";
     this.y = "-";
     this.z = "-";
@@ -222,47 +242,6 @@ startTracking() {
   });
 }
 
-// startTracking1() {
-//   const watchOptions = {
-//     enableHighAccuracy: true,
-//     timeout: 5000,
-//     maximumAge: 1
-//   };
-
-//   this.watchId = navigator.geolocation.watchPosition(position => {
-//     if (this.lastPosition) {
-//      
-//       const distance = this.calculateDistance(
-//         this.lastPosition.latitude,
-//         this.lastPosition.longitude,
-//         position.coords.latitude,
-//         position.coords.longitude
-//       );
-
-//   
-//       const timeElapsed = (position.timestamp - this.lastPosition.timestamp) / 1000;
-
-//       if (distance < 0.5) {
-//         this.kmh = 0;
-//       } else if (timeElapsed > 0) { 
-//   
-//         const speedInMetersPerSecond = distance / timeElapsed;
-//         this.kmh = speedInMetersPerSecond * 3.6;
-//       }
-//     }
-
-//    
-//     this.lastPosition = {
-//       latitude: position.coords.latitude,
-//       longitude: position.coords.longitude,
-//       timestamp: position.timestamp
-//     };
-
-//     console.log(`Speed: ${this.kmh} km/h`, position.coords.latitude, position.coords.longitude);
-//   }, error => {
-//     console.error('Error watching position:', error);
-//   }, watchOptions);
-// }
 
 startTracking1() {
   const watchOptions = {
@@ -283,7 +262,7 @@ startTracking1() {
         );
 
         //if the distance is between last point is 0,5 consider the speed 0
-        if (distance < 0.5) {
+        if (distance < 1) {
           this.kmh = 0;
         } else {
           //update speed normally if the distance moved is 0.5 meters or more
@@ -301,7 +280,14 @@ startTracking1() {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       };
+      // Generate waypoints for the speed limit check
+      let waypoints = [];
+      if (this.lastPosition) {
+        waypoints.push({ latitude: this.lastPosition.latitude, longitude: this.lastPosition.longitude });
+      }
+      waypoints.push({ latitude: position.coords.latitude, longitude: position.coords.longitude });
 
+      this.checkSpeedLimitsForRoute(waypoints)
       console.log(`Speed: ${this.kmh} km/h`, position.coords.latitude, position.coords.longitude);
     } else if (err) {
       console.error('Error watching position:', err);
@@ -310,6 +296,25 @@ startTracking1() {
     this.watchId = watchId;
   }).catch(error => {
     console.error('Error starting geolocation watch:', error);
+  });
+}
+
+
+checkSpeedLimitsForRoute(waypoints: { latitude: number, longitude: number }[]) {
+  this.hereService.getSpeedLimits(waypoints).subscribe({
+    next: (apiResponse) => {
+      try {
+        const fromRefSpeedLimit = apiResponse.response.route[0].leg[0].link[0].attributes.SPEED_LIMITS_FCN[0].FROM_REF_SPEED_LIMIT;
+        this.speedLimit = fromRefSpeedLimit; 
+      } catch (error) {
+        console.error('Failed to extract speed limit from response:', error);
+        this.speedLimit = 'Speed limit data unavailable';
+      }
+    },
+    error: (error) => {
+      console.error('Error fetching speed limits:', error);
+      this.speedLimit = 'Error fetching speed limit';
+    }
   });
 }
 
