@@ -6,9 +6,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content style="height: 700px">
-  <div style="display: flex; justify-content: center; align-items: center; height: 200px; ">
-    <svg width="400" height="200" >
+<ion-content style="height: absolute">
+  <div style="display: flex; justify-content: center; align-items: center; height: 200px; width: 100%;">
+    <svg width="350" height="350" viewBox="50 100 300 100">
       <!-- Semi-circle Arc -->
       <path d="M 100,200 A 100,100 0 0,1 300,200"
             fill="none"
@@ -20,30 +20,38 @@
             [attr.transform]="'rotate(' + (-calculateLeanAngle()) + ', 200, 200)'"
             [attr.stroke]="getArrowColor(calculateLeanAngle())"
             stroke-width="4" />
-          
     </svg>
-  </div>
-
-
-<ion-content style="height: 550px">
-  <div style="display: flex; justify-content: center; align-items: center; height: 200px; ">
+</div>
+  <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 25px;">
     <h1 style="margin: 0; font-size: 68px;">{{ kmh | number:'1.0-0' }} km/h</h1>
   </div>
-  <div style="display: flex; justify-content: center; align-items: center; height: 200px; ">
-    <h1 style="margin: 0; ">limit: {{ speedLimit }}  </h1>
-  </div>
-</ion-content>
-<h1> </h1>
 
-
-
-
-<ion-content style="height: 100px">
-  <div class="button-container">
+  <div class="button-container" style="padding-bottom: 25px;">
     <!-- Buttons to start/stop accelerometer and gyroscope -->
     <ion-button (click)="startAccel();startGyro();startTracking1();startMonitoringCrash()">Start</ion-button>
     <ion-button (click)="stopAccel();stopGyro()">Stop</ion-button>
   </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-card class="fixed-height-card">
+          
+        </ion-card>
+      </ion-col>
+      <ion-col size="6">
+        <ion-card class="fixed-height-card">
+          <img [src]="getSpeedLimitSign()" alt="Speed Limit Sign">
+           <ion-card-content>
+             Current Speed Limit: {{ speedLimit }} km/h
+            </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  
 </ion-content>
 
 

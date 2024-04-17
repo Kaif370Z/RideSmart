@@ -1,9 +1,7 @@
 
 import { Component, Inject, OnInit } from '@angular/core';
-import { PluginListenerHandle } from '@capacitor/core';
-import { Motion } from '@capacitor/motion';
 import { Platform } from '@ionic/angular';
-import { Geolocation, GeolocationPosition } from '@capacitor/geolocation';
+import { Geolocation} from '@capacitor/geolocation';
 import { SpeedService } from '../services/speed.service';
 import { CrashDetectionService } from '../services/crash-detection.service';
 import { GoogleRoadsService } from '../services/google-roads.service';
@@ -37,11 +35,6 @@ interface Position {
   styleUrls: ['driveTab.page.scss']
 })
 
-
-
-
-
-
 export class driveTabPage {
 
 
@@ -54,12 +47,12 @@ export class driveTabPage {
   kmh: number = 0;
 
   currentSpeedMph: number = 0;
-  lat : number = 0;
-  speed : number = 0;
+  lat: number = 0;
+  speed: number = 0;
 
   currentSpeedLimit: string = '';
 
-  public speedLimit: string = '';
+  public speedLimit: number = 0;
 
   x: string;
   y: string;
@@ -77,14 +70,14 @@ export class driveTabPage {
 
   //angular velocity around y axis
   gyroscopeRateY: number = 0;
-  
+
   //lean angle estimation
   leanAngle: number = 0;
- 
+
   //time tracking for gyroscope
   lastUpdate: number = 0;
 
-  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope,private platform: Platform ,private speedService : SpeedService,private crashDetectionService: CrashDetectionService, private googleRoadsService: GoogleRoadsService, private hereService: HEREService) {
+  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope, private platform: Platform, private speedService: SpeedService, private crashDetectionService: CrashDetectionService, private googleRoadsService: GoogleRoadsService, private hereService: HEREService) {
     this.x = "-";
     this.y = "-";
     this.z = "-";
@@ -99,7 +92,7 @@ export class driveTabPage {
   }
 
   ngOnInit() {
-   // this.watchSpeed(); 
+    // this.watchSpeed(); 
   }
 
   startAccel() {
@@ -112,14 +105,14 @@ export class driveTabPage {
       };
 
       //
-      this.gid= this.deviceMotion.watchAcceleration(option).subscribe((acc: DeviceMotionAccelerationData) => {
+      this.gid = this.deviceMotion.watchAcceleration(option).subscribe((acc: DeviceMotionAccelerationData) => {
         //assinging data from device sensors to local variables
         this.x = "" + acc.x;
         this.y = "" + acc.y;
         this.z = "" + acc.z;
         this.timestamp = "" + acc.timestamp;
 
-        
+
       });
     }
     //catch error if any
@@ -135,7 +128,7 @@ export class driveTabPage {
 
   startGyro() {
     //How often to collect accelerometer Data
-    let options: GyroscopeOptions = { frequency: 1000 }; 
+    let options: GyroscopeOptions = { frequency: 1000 };
     this.gid = this.gyroscope.watch(options).subscribe((orientation: GyroscopeOrientation) => {
       /*this.gx = "" + orientation.x;
       this.gy = "" + orientation.y;
@@ -149,34 +142,34 @@ export class driveTabPage {
         const deltaTime = (now - this.lastUpdate) / 1000;
         //assigning sensor data to variable 
         this.gyroscopeRateY = orientation.y;
-        
+
         this.leanAngle += this.gyroscopeRateY * deltaTime;
       }
       this.lastUpdate = now;
       console.log('Current Lean Angle:', this.leanAngle);
-    });  
+    });
   }
 
-  getLeanAngle() : number {
+  getLeanAngle(): number {
     return this.leanAngle;
   }
 
-  
+
 
   //change colour of angle scale depending on lean angle
   getArrowColor(leanAngle: number): string {
-    if (leanAngle >= -20 && leanAngle < 20 ) {
+    if (leanAngle >= -20 && leanAngle < 20) {
       return 'green';
     } else if (leanAngle >= 20 && leanAngle < 40) {
       return 'orange';
     } else if (leanAngle >= 40) {
       return 'red';
-    }else if (leanAngle >= -40 && leanAngle < -20){
+    } else if (leanAngle >= -40 && leanAngle < -20) {
       return 'orange';
-    }else if(leanAngle < -40){
+    } else if (leanAngle < -40) {
       return 'red';
     }
-    return 'green'; 
+    return 'green';
   }
 
 
@@ -185,165 +178,148 @@ export class driveTabPage {
   }
 
   calculateLeanAngle(): number {
-      //convert string accelerometer values to numbers
-      const ax = parseFloat(this.x);
-      const ay = parseFloat(this.y);
-      const az = parseFloat(this.z);
+    //convert string accelerometer values to numbers
+    const ax = parseFloat(this.x);
+    const ay = parseFloat(this.y);
+    const az = parseFloat(this.z);
 
-      //convert to radians
-      const leanAngleRadians = Math.atan2(ax, Math.sqrt(ay * ay + az * az));
-      
-      //radians to degrees
-      let leanAngleDegrees = leanAngleRadians * (180 / Math.PI);
-      
-      console.log("Lean Angle Degrees:", leanAngleDegrees);
-    
-      return  leanAngleDegrees;
+    //convert to radians
+    const leanAngleRadians = Math.atan2(ax, Math.sqrt(ay * ay + az * az));
+
+    //radians to degrees
+    let leanAngleDegrees = leanAngleRadians * (180 / Math.PI);
+
+    console.log("Lean Angle Degrees:", leanAngleDegrees);
+
+    return leanAngleDegrees;
   }
 
-  
+  lastPosition: Position | null = null;
+  movementThreshold = 10;
 
+  startTracking1() {
+    const watchOptions = {
+      enableHighAccuracy: true,
+      timeout: 500,
+      maximumAge: 0
+    };
 
- //lastPoint: Position | null = null;
+    Geolocation.watchPosition(watchOptions, (position, err) => {
+      if (position) {
+        if (this.lastPosition) {
+          // Calculate the distance between the last and current position
+          const distance = this.calculateDistance(
+            this.lastPosition.latitude,
+            this.lastPosition.longitude,
+            position.coords.latitude,
+            position.coords.longitude
+          );
 
- lastPosition: Position | null = null;
- movementThreshold = 10; 
-
-
-startTracking() {
-  const watchOptions = {
-    enableHighAccuracy: true,
-    timeout: 0, 
-    maximumAge: 0
-  };
-
-  //threshold for treating the speed as 0 in m/s
-  const speedThreshold = 0.5; 
-
-  Geolocation.watchPosition(watchOptions, (position, err) => {
-    if (position) {
-      let speedInMetersPerSecond = position.coords.speed ?? 0;
-
-      //threshold to treat low speeds as 0
-      if (speedInMetersPerSecond < speedThreshold) {
-        speedInMetersPerSecond = 0;
-      }
-
-      //convert m/s to km/h
-      this.kmh = speedInMetersPerSecond * 3.6;
-      console.log(this.kmh, position.coords.latitude, position.coords.longitude);
-    } else if (err) {
-      console.error('Error watching position:', err);
-    }
-  }).then(watchId => {
-    this.watchId = watchId;
-  }).catch(error => {
-    console.error('Error starting geolocation watch:', error);
-  });
-}
-
-
-startTracking1() {
-  const watchOptions = {
-    enableHighAccuracy: true,
-    timeout: 500,
-    maximumAge: 0
-  };
-
-  Geolocation.watchPosition(watchOptions, (position, err) => {
-    if (position) {
-      if (this.lastPosition) {
-        // Calculate the distance between the last and current position
-        const distance = this.calculateDistance(
-          this.lastPosition.latitude,
-          this.lastPosition.longitude,
-          position.coords.latitude,
-          position.coords.longitude
-        );
-
-        //if the distance is between last point is 0,5 consider the speed 0
-        if (distance < 1) {
-          this.kmh = 0;
+          //if the distance is between last point is 0.3 consider the speed 0
+          if (distance < 0.3) {
+            this.kmh = 0;
+          } else {
+            //update speed normally if the distance moved is 0.5 meters or more
+            const speedInMetersPerSecond = position.coords.speed ?? 0;
+            this.kmh = speedInMetersPerSecond * 3.6;
+          }
         } else {
-          //update speed normally if the distance moved is 0.5 meters or more
+          //no last position, so just set the current one (first time this runs)
           const speedInMetersPerSecond = position.coords.speed ?? 0;
           this.kmh = speedInMetersPerSecond * 3.6;
         }
-      } else {
-        //no last position, so just set the current one (first time this runs)
-        const speedInMetersPerSecond = position.coords.speed ?? 0;
-        this.kmh = speedInMetersPerSecond * 3.6;
-      }
 
-      //update lastPosition with the current position for the next comparison
-      this.lastPosition = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
-      };
-      // Generate waypoints for the speed limit check
-      let waypoints = [];
-      if (this.lastPosition) {
-        waypoints.push({ latitude: this.lastPosition.latitude, longitude: this.lastPosition.longitude });
-      }
-      waypoints.push({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+        //update lastPosition with the current position for the next comparison
+        this.lastPosition = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        // Generate waypoints for the speed limit check
+        let waypoints = [];
+        if (this.lastPosition) {
+          waypoints.push({ latitude: this.lastPosition.latitude, longitude: this.lastPosition.longitude });
+        }
+        waypoints.push({ latitude: position.coords.latitude, longitude: position.coords.longitude });
 
-      this.checkSpeedLimitsForRoute(waypoints)
-      console.log(`Speed: ${this.kmh} km/h`, position.coords.latitude, position.coords.longitude);
-    } else if (err) {
-      console.error('Error watching position:', err);
+        this.checkSpeedLimitsForRoute(waypoints)
+        console.log(`Speed: ${this.kmh} km/h`, position.coords.latitude, position.coords.longitude);
+      } else if (err) {
+        console.error('Error watching position:', err);
+      }
+    }).then(watchId => {
+      this.watchId = watchId;
+    }).catch(error => {
+      console.error('Error starting geolocation watch:', error);
+    });
+  }
+
+
+  checkSpeedLimitsForRoute(waypoints: { latitude: number, longitude: number }[]) {
+    this.hereService.getSpeedLimits(waypoints).subscribe({
+      next: (apiResponse) => {
+        try {
+          const fromRefSpeedLimit = apiResponse.response.route[0].leg[0].link[0].attributes.SPEED_LIMITS_FCN[0].FROM_REF_SPEED_LIMIT;
+          this.speedLimit = Number(fromRefSpeedLimit);
+          console.log(this.speedLimit);
+        } catch (error) {
+          console.error('Failed to extract speed limit from response:', error);
+          this.speedLimit = 0;
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching speed limits:', error);
+        this.speedLimit = 0;
+      }
+    });
+  }
+
+  getSpeedLimitSign(): string {
+    console.log("getting speed limit sign");
+    console.log("Current speed limit: ", this.speedLimit);
+    switch(this.speedLimit) {
+      case 0:
+        return 'assets/images/none.png';
+      case 50:
+        console.log("applying 50 kmh image");
+        return 'assets/images/50.png';
+      case 60:
+        return 'assets/images/60.png';
+      case 80:
+        return 'assets/images/80.png';
+      case 100:
+        return 'assets/images/100.png';
+      default:
+        console.log("Default case hit, speed limit: ", this.speedLimit);
+        return 'assets/images/none.png'; 
     }
-  }).then(watchId => {
-    this.watchId = watchId;
-  }).catch(error => {
-    console.error('Error starting geolocation watch:', error);
-  });
-}
+  }
 
 
-checkSpeedLimitsForRoute(waypoints: { latitude: number, longitude: number }[]) {
-  this.hereService.getSpeedLimits(waypoints).subscribe({
-    next: (apiResponse) => {
-      try {
-        const fromRefSpeedLimit = apiResponse.response.route[0].leg[0].link[0].attributes.SPEED_LIMITS_FCN[0].FROM_REF_SPEED_LIMIT;
-        this.speedLimit = fromRefSpeedLimit; 
-      } catch (error) {
-        console.error('Failed to extract speed limit from response:', error);
-        this.speedLimit = 'Speed limit data unavailable';
-      }
-    },
-    error: (error) => {
-      console.error('Error fetching speed limits:', error);
-      this.speedLimit = 'Error fetching speed limit';
-    }
-  });
-}
+  //Applying Haverstine Formula
+  calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const earthRadiusKm = 6371;
 
+    const dLat = this.degreesToRadians(lat2 - lat1);
+    const dLon = this.degreesToRadians(lon2 - lon1);
 
-//Applying Haverstine Formula
-calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const earthRadiusKm = 6371;
+    lat1 = this.degreesToRadians(lat1);
+    lat2 = this.degreesToRadians(lat2);
 
-  const dLat = this.degreesToRadians(lat2 - lat1);
-  const dLon = this.degreesToRadians(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = earthRadiusKm * c;
 
-  lat1 = this.degreesToRadians(lat1);
-  lat2 = this.degreesToRadians(lat2);
+    return distance * 1000;
+  }
 
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2); 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
-  const distance = earthRadiusKm * c;
+  degreesToRadians(degrees: number): number {
+    return degrees * (Math.PI / 180);
+  }
 
-  return distance * 1000;
-}
-
-degreesToRadians(degrees: number): number {
-  return degrees * (Math.PI / 180);
-}
-
-startMonitoringCrash() {
-  this.crashDetectionService.startMonitoring();
-}
+  startMonitoringCrash() {
+    this.crashDetectionService.startMonitoring();
+  }
 
 
 }
