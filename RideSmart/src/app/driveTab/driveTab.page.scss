@@ -43,3 +43,16 @@
 .fixed-height-card {
   height: 150px;
 }
+
+.transparent-card {
+  --background: transparent;       
+  --border-style: none;            
+  --box-shadow: none;             
+}
+
+.compass-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

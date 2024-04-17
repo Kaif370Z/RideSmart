@@ -49,6 +49,7 @@ export class driveTabPage {
   currentSpeedMph: number = 0;
   lat: number = 0;
   speed: number = 0;
+  currentHeading: number  = 0;
 
   currentSpeedLimit: string = '';
 
@@ -229,6 +230,7 @@ export class driveTabPage {
           this.kmh = speedInMetersPerSecond * 3.6;
         }
 
+
         //update lastPosition with the current position for the next comparison
         this.lastPosition = {
           latitude: position.coords.latitude,
@@ -241,6 +243,9 @@ export class driveTabPage {
         }
         waypoints.push({ latitude: position.coords.latitude, longitude: position.coords.longitude });
 
+        
+        this.currentHeading = position.coords.heading ?? 0;
+        console.log("Current Heading" , this.currentHeading);
         this.checkSpeedLimitsForRoute(waypoints)
         console.log(`Speed: ${this.kmh} km/h`, position.coords.latitude, position.coords.longitude);
       } else if (err) {
