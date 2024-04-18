@@ -15,8 +15,11 @@
   </div>
 
   <div class="button-container" style="padding-bottom: 25px;">
+    <ion-item>
+      <ion-input type="number" placeholder="Enter Speed" [(ngModel)]="targetSpeed" ></ion-input>
+    </ion-item>
     <!-- Buttons to start acceleration timer -->
-    <ion-button>GO!</ion-button>
+    <ion-button (click) = "startTracking()">GO!</ion-button>
   </div>
   <div>
     <ion-card>
@@ -26,5 +29,4 @@
       </ion-row>
     </ion-card>
   </div>
-
 </ion-content>

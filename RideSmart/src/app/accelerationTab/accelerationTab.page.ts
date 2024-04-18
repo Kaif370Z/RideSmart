@@ -16,24 +16,26 @@ export class accelerationTabPage {
 
 
 
-  constructor(private crashDetectionService: CrashDetectionService) {}
+  constructor(private crashDetectionService: CrashDetectionService, private geolocation: Geolocation) {}
   
   lastPosition: Position | null = null;
   movementThreshold = 10;
   currentHeading: number  = 0;
   kmh: number = 0;
   watchId: any | null = null;
+  targetSpeed: number = 0;
+  startTime: number = 0;
+  timeTaken: number = 0;
 
 
-
-  startTracking1() {
+  startTracking() {
     const watchOptions = {
       enableHighAccuracy: true,
       timeout: 500,
       maximumAge: 0
     };
 
-    Geolocation.watchPosition(watchOptions, (position, err) => {
+    this.watchId = Geolocation.watchPosition(watchOptions, (position, err) => {
       if (position) {
         if (this.lastPosition) {
           // Calculate the distance between the last and current position
@@ -64,16 +66,20 @@ export class accelerationTabPage {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
-        // Generate waypoints for the speed limit check
-        let waypoints = [];
-        if (this.lastPosition) {
-          waypoints.push({ latitude: this.lastPosition.latitude, longitude: this.lastPosition.longitude });
-        }
-        waypoints.push({ latitude: position.coords.latitude, longitude: position.coords.longitude });
-
         
-        this.currentHeading = position.coords.heading ?? 0;
-        console.log("Current Heading" , this.currentHeading);
+        if (this.startTime === null && this.kmh > 0) {
+          //start timer when moved is detected
+          this.startTime = Date.now();
+        }
+
+        if (this.kmh >= this.targetSpeed) {
+          //once the target speed is reached calculate the time taken
+          this.timeTaken = (Date.now() - this.startTime) / 1000;
+          console.log('time taken');
+          Geolocation.clearWatch(this.watchId);
+        }
+
+       
         console.log(`Speed: ${this.kmh} km/h`, position.coords.latitude, position.coords.longitude);
       } else if (err) {
         console.error('Error watching position:', err);

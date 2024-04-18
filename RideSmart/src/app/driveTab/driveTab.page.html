@@ -25,6 +25,7 @@
   <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 25px;">
     <h1 [ngClass]="getSpeedWarning().class" [ngStyle]="getSpeedWarning()" style="margin: 0; font-size: 68px; ">{{ kmh | number:'1.0-0' }} km/h</h1>
   </div>
+  <p> {{getAngle()}}</p>
 
   <div class="button-container" style="padding-bottom: 25px;">
     <!-- Buttons to start/stop accelerometer and gyroscope -->
