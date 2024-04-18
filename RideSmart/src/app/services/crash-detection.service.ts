@@ -7,7 +7,7 @@ import { CrashModalPage } from '../crash-modal/crash-modal.page';
   providedIn: 'root'
 })
 export class CrashDetectionService {
-  private crashThresholdG = 2.5; 
+  private crashThresholdG = 15; 
 
   constructor(private deviceMotion: DeviceMotion, private modalController: ModalController) {}
 
