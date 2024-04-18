@@ -29,7 +29,7 @@ export class SensorFusionService {
 
     this.gyroscope.watch(gyroOptions).subscribe((orientation: GyroscopeOrientation) => {
       //angular velocity along the x axis in degrees per second
-      const gyroAngleChange = orientation.x;
+      const gyroAngleChange = orientation.y;
       //seconds corresponding to gyroscope options
       const deltaTime = 0.1; 
       //updating angle with gyroscope readings

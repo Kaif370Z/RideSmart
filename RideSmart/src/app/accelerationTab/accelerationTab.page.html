@@ -6,8 +6,25 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content style="height: 100px">
-  <div class="button-container">
-    <ion-button (click)="startMonitoringCrash()">Start</ion-button>
+<ion-content style="height: absolute">
+  <div style="display: flex; justify-content: center; align-items: center; padding-top: 15%;">
+    <h1 style="margin: 0; font-size: 68px; ">{{ kmh | number:'1.0-0' }} km/h</h1>
   </div>
+  <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 5%; padding-top: 5%;">
+    <h1 style="margin: 0; font-size: 48px; ">24.23 Sec</h1>
+  </div>
+
+  <div class="button-container" style="padding-bottom: 25px;">
+    <!-- Buttons to start acceleration timer -->
+    <ion-button>GO!</ion-button>
+  </div>
+  <div>
+    <ion-card>
+      <ion-row>
+        <ion-col>23</ion-col>
+        <ion-col>200</ion-col>
+      </ion-row>
+    </ion-card>
+  </div>
+
 </ion-content>

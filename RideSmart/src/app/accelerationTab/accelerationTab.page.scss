@@ -1,0 +1,14 @@
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .button-container ion-button {
+    margin: 0 10px;
+  }
+  ion-button {
+    --background: red;
+    --background-activated: purple;
+    --border-color: white !important;
+}
