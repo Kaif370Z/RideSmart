@@ -23,7 +23,7 @@
     </svg>
 </div>
   <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 25px;">
-    <h1 style="margin: 0; font-size: 68px;">{{ kmh | number:'1.0-0' }} km/h</h1>
+    <h1 [ngClass]="getSpeedWarning().class" [ngStyle]="getSpeedWarning()" style="margin: 0; font-size: 68px; ">{{ kmh | number:'1.0-0' }} km/h</h1>
   </div>
 
   <div class="button-container" style="padding-bottom: 25px;">
@@ -44,9 +44,6 @@
       <ion-col size="6">
         <ion-card class="fixed-height-card transparent-card">
           <img [src]="getSpeedLimitSign()" alt="Speed Limit Sign">
-           <ion-card-content>
-             Current Speed Limit: {{ speedLimit }} km/h
-            </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>

@@ -281,9 +281,12 @@ export class driveTabPage {
   getSpeedLimitSign(): string {
     console.log("getting speed limit sign");
     console.log("Current speed limit: ", this.speedLimit);
+    this.getSpeedWarning();
     switch(this.speedLimit) {
       case 0:
         return 'assets/images/none.png';
+      case 30:
+        return 'assets/images/30.png';
       case 50:
         console.log("applying 50 kmh image");
         return 'assets/images/50.png';
@@ -294,8 +297,19 @@ export class driveTabPage {
       case 100:
         return 'assets/images/100.png';
       default:
-        console.log("Default case hit, speed limit: ", this.speedLimit);
+        console.log("default case, speed limit: ", this.speedLimit);
         return 'assets/images/none.png'; 
+    }
+  }
+  
+  getSpeedWarning()  {
+    if( this.kmh > this.speedLimit){
+      console.log("SPEED LIMIT REACHED");
+      console.log("numbers:" , this.kmh, this.speedLimit)
+      return {color: 'red', class: 'pulsing'} ;
+    }
+    else{
+      return {color: 'green'};
     }
   }
 
