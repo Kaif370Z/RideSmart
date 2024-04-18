@@ -12,13 +12,13 @@
       <!-- Semi-circle Arc -->
       <path d="M 100,200 A 100,100 0 0,1 300,200"
             fill="none"
-            [attr.stroke]="getArrowColor(calculateLeanAngle())"
+            [attr.stroke]="getArrowColor(getAngle())"
             stroke-width="10" />
 
       <!-- Needle -->
       <line x1="200" y1="200" x2="200" y2="100"
-            [attr.transform]="'rotate(' + (-calculateLeanAngle()) + ', 200, 200)'"
-            [attr.stroke]="getArrowColor(calculateLeanAngle())"
+            [attr.transform]="'rotate(' + (-getAngle()) + ', 200, 200)'"
+            [attr.stroke]="getArrowColor(getAngle())"
             stroke-width="4" />
     </svg>
 </div>
@@ -28,7 +28,7 @@
 
   <div class="button-container" style="padding-bottom: 25px;">
     <!-- Buttons to start/stop accelerometer and gyroscope -->
-    <ion-button (click)="startAccel();startGyro();startTracking1();startMonitoringCrash()">Start</ion-button>
+    <ion-button (click)="startTracking1();startMonitoringCrash()">Start</ion-button>
     <ion-button (click)="stopAccel();stopGyro()">Stop</ion-button>
   </div>
 
@@ -43,7 +43,9 @@
       </ion-col>
       <ion-col size="6">
         <ion-card class="fixed-height-card transparent-card">
+          <div class="compass-container">
           <img [src]="getSpeedLimitSign()" alt="Speed Limit Sign">
+          </div>
         </ion-card>
       </ion-col>
     </ion-row>

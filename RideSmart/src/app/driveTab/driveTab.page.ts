@@ -9,6 +9,7 @@ import { GoogleRoadsService } from '../services/google-roads.service';
 import { DeviceMotion, DeviceMotionAccelerationData, DeviceMotionAccelerometerOptions } from '@ionic-native/device-motion/ngx';
 import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope/ngx';
 import { HEREService } from '../services/here.service';
+import { SensorFusionService } from '../services/sensor-fusion.service';
 
 declare var google: {
   maps: {
@@ -78,7 +79,7 @@ export class driveTabPage {
   //time tracking for gyroscope
   lastUpdate: number = 0;
 
-  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope, private platform: Platform, private speedService: SpeedService, private crashDetectionService: CrashDetectionService, private googleRoadsService: GoogleRoadsService, private hereService: HEREService) {
+  constructor(public deviceMotion: DeviceMotion, public gyroscope: Gyroscope, private platform: Platform, private speedService: SpeedService, private crashDetectionService: CrashDetectionService, private googleRoadsService: GoogleRoadsService, private hereService: HEREService, private sensorFusionService : SensorFusionService) {
     this.x = "-";
     this.y = "-";
     this.z = "-";
@@ -94,7 +95,15 @@ export class driveTabPage {
 
   ngOnInit() {
     // this.watchSpeed(); 
+    this.sensorFusionService.startSensors();
   }
+
+  getAngle() {
+    const angle = this.sensorFusionService.getCurrentAngle();
+    console.log(`Current lean angle: ${angle}`);
+    return angle;
+  }
+
 
   startAccel() {
     try {
@@ -107,7 +116,7 @@ export class driveTabPage {
 
       //
       this.gid = this.deviceMotion.watchAcceleration(option).subscribe((acc: DeviceMotionAccelerationData) => {
-        //assinging data from device sensors to local variables
+        //assinging data from device accelerometer to local variables
         this.x = "" + acc.x;
         this.y = "" + acc.y;
         this.z = "" + acc.z;
@@ -129,12 +138,13 @@ export class driveTabPage {
 
   startGyro() {
     //How often to collect accelerometer Data
-    let options: GyroscopeOptions = { frequency: 1000 };
+    let options: GyroscopeOptions = { frequency: 100 };
     this.gid = this.gyroscope.watch(options).subscribe((orientation: GyroscopeOrientation) => {
-      /*this.gx = "" + orientation.x;
+      //assigning gyroscope data to variables
+      this.gx = "" + orientation.x;
       this.gy = "" + orientation.y;
       this.gz = "" + orientation.z;
-      this.gtimestamp = "" + orientation.timestamp;*/
+      this.gtimestamp = "" + orientation.timestamp;
 
       //current time
       const now = Date.now();
@@ -339,8 +349,6 @@ export class driveTabPage {
   startMonitoringCrash() {
     this.crashDetectionService.startMonitoring();
   }
-
-
 }
 
 
