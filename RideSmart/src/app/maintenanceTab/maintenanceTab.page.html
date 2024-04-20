@@ -20,14 +20,14 @@
 
   
 
-  <button ion-button full icon-left (click)="startTracking()" *ngIf="!isTracking">
+  <button ion-button full icon-left (click)="startTracking()" *ngIf="!trackingService.isTracking">
     <ion-icon name="locate"></ion-icon>
     Start Tracking
   </button>
 
   <div #mapElement style="height: 60%;"></div>
 
-  <button ion-button full icon-left (click)="stopTracking()" *ngIf="isTracking">
+  <button ion-button full icon-left (click)="stopTracking()" *ngIf="trackingService.isTracking">
     <ion-icon name="hand"></ion-icon>
     Stop Tracking
   </button>

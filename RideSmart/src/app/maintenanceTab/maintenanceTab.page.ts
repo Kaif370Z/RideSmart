@@ -7,6 +7,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { FirestoreService } from '../services/firestore.service';
 import { AuthService } from '../services/auth.service';
 import { User } from 'firebase/auth';
+import { TrackingService } from '../services/tracking.service';
 
 declare var google: {
   maps: {
@@ -51,7 +52,8 @@ export class maintenanceTabPage {
     private storage: Storage,
     private firestoreService: FirestoreService,
     private authService: AuthService, 
-    private alertCtrl: AlertController ) {
+    private alertCtrl: AlertController,
+    private trackingService: TrackingService ) {
       this.storage.create();
     }
 
@@ -202,6 +204,12 @@ loadUserRoutes() {
     }
   );
 }
+
+staertTracking() {
+  this.trackingService.startTracking();
+}
+
+
   
 
 }
