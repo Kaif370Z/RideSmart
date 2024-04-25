@@ -45,31 +45,34 @@ export class maintenanceTabPage {
 
   positionSubscription!: Subscription;
 
-  constructor(public navCtrl: NavController, 
+  private startTime: Date | null = null;
+  private totalDistance: number = 0;
 
-    private plt: Platform, 
+  constructor(public navCtrl: NavController,
+
+    private plt: Platform,
     private geolocation: Geolocation,
     private storage: Storage,
     private firestoreService: FirestoreService,
-    private authService: AuthService, 
+    private authService: AuthService,
     private alertCtrl: AlertController,
-    private trackingService: TrackingService ) {
-      this.storage.create();
-    }
+    public trackingService: TrackingService) {
+    this.storage.create();
+  }
 
-    ngOnInit() {
-      this.authService.currentUser.subscribe(user => {
-        this.user = user;
-        if (this.user) {
-          this.loadUserRoutes();
-        }
-      });
-    }
-   
+  ngOnInit() {
+    this.authService.currentUser.subscribe(user => {
+      this.user = user;
+      if (this.user) {
+        this.loadUserRoutes();
+      }
+    });
+  }
+
 
   async ngAfterViewInit() {
     this.plt.ready().then(async () => {
-     this.loadHistoricRoutes();
+      this.loadHistoricRoutes();
       let mapOptions = {
         zoom: 13,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -89,127 +92,158 @@ export class maintenanceTabPage {
         console.log('Error getting location', error);
       }
     });
-    
-  }
-  
 
-loadHistoricRoutes() {
-  this.storage.get('routes').then(data => {
-    if(data) {
-      this.previousTracks = data;
-    }
-  });
-}
-
-showHistoryRoute(path: Array<{ lat: number; lng: number; }>) {
-  this.redrawPath(path);
-}
-
-startTracking() {
-  this.isTracking = true;
-  this.trackedRoute = [];
-
-  const watchOptions = {
-    enableHighAccuracy: true,
-    timeout: 0,
-    maximumAge: 0
-  };
-
-  //https://github.com/ionic-team/capacitor-plugins/issues/538
-
-  // Correctly handle the promise to extract the watch ID string
-  Geolocation.watchPosition(watchOptions, (position, err) => {
-    if (position) {
-      const speedInMetersPerSecond = position.coords.speed ?? 0;
-      this.kmh = speedInMetersPerSecond * 3.6;
-      this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });
-      this.saveRoute();
-      //this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });
-      this.redrawPath(this.trackedRoute);
-    console.log(position.coords.latitude, position.coords.longitude);
-    } else if (err) {
-      console.error('Error watching position:', err);
-    }
-
-  }).then(watchId => {
-    this.watchId = watchId;
-  }).catch(error => {
-    console.error('Error starting geolocation watch:', error);
-  });
-}
-
-async saveRoute() {
-  await this.storage.set('trackedRoute', this.trackedRoute);
-  
-}
-
-async getSavedRoute() {
-  return await this.storage.get('trackedRoute');
-}
-
-redrawPath(path: { lat: number; lng: number; }[]) {
-  // Implementation of redrawPath method
-  if (this.currentMapTrack) {
-    this.currentMapTrack.setMap(null);
   }
 
-  if (path.length > 1) {
-    this.currentMapTrack = new google.maps.Polyline({
-      path: path,
-      geodesic: true,
-      strokeColor: '#ff00ff',
-      strokeOpacity: 1.0,
-      strokeWeight: 3
+
+  loadHistoricRoutes() {
+    this.storage.get('routes').then(data => {
+      if (data) {
+        this.previousTracks = data;
+      }
     });
-    this.currentMapTrack.setMap(this.map);
   }
+
+  showHistoryRoute(path: Array<{ lat: number; lng: number; }>) {
+    this.redrawPath(path);
+  }
+
+  startTracking() {
+    if (this.isTracking) {
+      console.error('Tracking is already started.');
+      return;
+    }
+
+    this.isTracking = true;
+    this.trackedRoute = [];
+    this.totalDistance = 0;
+    this.startTime = new Date();
+
+    const watchOptions = {
+      enableHighAccuracy: true,
+      timeout: 0,
+      maximumAge: 0
+    };
+
+    Geolocation.watchPosition(watchOptions, (position, err) => {
+      if (position) {
+        this.kmh = position.coords.speed ? position.coords.speed * 3.6 : 0;
+        if (this.trackedRoute.length > 0) {
+          const lastPoint = this.trackedRoute[this.trackedRoute.length - 1];
+          this.totalDistance += this.trackingService.calculateDistance(lastPoint.lat, lastPoint.lng, position.coords.latitude, position.coords.longitude);
+        }
+        this.trackedRoute.push({ lat: position.coords.latitude, lng: position.coords.longitude });
+        this.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+        this.redrawPath(this.trackedRoute);
+      } else if (err) {
+        console.error('Error watching position:', err);
+      }
+    }).then(watchId => {
+      this.watchId = watchId;
+    }).catch(error => {
+      console.error('Error starting geolocation watch:', error);
+    });
+  }
+
+  
+
+  async saveRoute() {
+    await this.storage.set('trackedRoute', this.trackedRoute);
+
+  }
+
+  async getSavedRoute() {
+    return await this.storage.get('trackedRoute');
+  }
+
+  redrawPath(path: { lat: number; lng: number; }[]) {
+    // Implementation of redrawPath method
+    if (this.currentMapTrack) {
+      this.currentMapTrack.setMap(null);
+    }
+
+    if (path.length > 1) {
+      this.currentMapTrack = new google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor: '#ff00ff',
+        strokeOpacity: 1.0,
+        strokeWeight: 3
+      });
+      this.currentMapTrack.setMap(this.map);
+    }
 
   }
 
   stopTracking() {
-
+    if (!this.isTracking) {
+      console.log("Tracking has not been started.");
+      return;
+    }
+    
     if (this.watchId !== null) {
       Geolocation.clearWatch({ id: this.watchId });
       this.isTracking = false;
       this.watchId = null;
-      console.log("Stopped tracking");
+
+      const duration = this.startTime ? (new Date().getTime() - this.startTime.getTime()) : 0;
+      const distance = this.totalDistance;
+      let newRoute = {
+        finished: new Date(),
+        path: this.trackedRoute,
+        totalDistance: distance,
+        duration: duration
+      };
+      this.previousTracks.push(newRoute);
+      this.storage.set('routes', this.previousTracks);
+
+      if (this.user) {
+        this.firestoreService.addRouteData(this.user.uid, newRoute)
+          .then(() => console.log("Route saved to Firestore"))
+          .catch(error => console.error("Error saving route to Firestore:", error));
+      }
+
+      this.positionSubscription.unsubscribe();
+      this.currentMapTrack.setMap(null);
+      this.loadUserRoutes();
+      this.trackedRoute = [];
+      this.totalDistance = 0;
+      this.startTime = null;
     }
-    
-    let newRoute = { finished: new Date(), path: this.trackedRoute };
-    this.previousTracks.push(newRoute);
-    this.storage.set('routes', this.previousTracks);
+  }
 
-    if (this.user) {
-      this.firestoreService.addRouteData(this.user.uid, newRoute)
-        .then(() => console.log("Route saved to Firestore"))
-        .catch(error => console.error("Error saving route to Firestore:", error));
-    }
+  loadUserRoutes() {
+    if (!this.user) return;
+    this.firestoreService.getRoutes(this.user.uid).subscribe(
+      routes => {
+        this.routes = routes;
+        console.log(this.routes);
+      },
+      error => {
+        console.error("Error loading routes:", error);
 
-    this.isTracking = false;
-    this.positionSubscription.unsubscribe();
-    this.currentMapTrack.setMap(null);
-    this.loadUserRoutes();
-}
+      }
+    );
+  }
 
-loadUserRoutes() {
-  if (!this.user) return;
-  this.firestoreService.getRoutes(this.user.uid).subscribe(
-    routes => {
-      this.routes = routes;
-      console.log(this.routes);
-    },
-    error => {
-      console.error("Error loading routes:", error);
-      // You could also display an alert or a toast to inform the user of the error.
-    }
-  );
-}
+  formatDuration(ms: number): string {
+    const seconds = Math.floor((ms / 1000) % 60);
+    const minutes = Math.floor((ms / (1000 * 60)) % 60);
+    const hours = Math.floor((ms / (1000 * 3600)));
 
-staertTracking() {
-  this.trackingService.startTracking();
-}
+    const formattedHours = hours < 10 ? '0' + hours : hours;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
 
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  }
 
-  
+  startTracking2() {
+    this.trackingService.startTracking();
+  }
+
+  stopTracking2() {
+    this.trackingService.stopTracking();
+  }
 
 }
