@@ -18,7 +18,7 @@
             stroke-width="10" />
 
       <!-- needle-->
-      <!-- the transform attribute rotates the needle based on the lean angle returned by getAngle() -->
+      <!-- the transform attribute rotates the needle based on the lean angle returned by -->
       <!-- getArrowColor dynamically sets the color of the needle -->
       <line x1="200" y1="200" x2="200" y2="100"
             [attr.transform]="'rotate(' + (-getAngle()) + ', 200, 200)'"
@@ -34,7 +34,7 @@
   <div class="button-container" style="padding-bottom: 25px;">
     <!-- buttons to start/stop gps tracking and crash monitoring -->
     <ion-button (click)="startTracking1();startMonitoringCrash()">Start</ion-button>
-    <ion-button (click)="stopAccel();stopGyro()">Stop</ion-button>
+    <ion-button (click)="open()">Stop</ion-button>
   </div>
 
   <ion-grid>

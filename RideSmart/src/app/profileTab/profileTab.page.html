@@ -16,6 +16,7 @@
     <p>Year: {{ userData.year }}</p>
     <p>Service Type: {{ userData.part }}</p>
     <p>Service Done Date: {{ userData.serviceDoneDate }}</p>
+    <p>Emergency Number: {{ userData.emergencyNumber }}</p>
 
     <ion-grid>
       <ion-row>
@@ -28,7 +29,7 @@
     <!--<ion-button *ngIf="user" (click)="updateProfile()">Update Profile</ion-button>-->
 
 
-    <ion-button (click)="showUpdateProfileModal()">Add Bike Details</ion-button>
+    <ion-button (click)="showUpdateProfileModal()">Update User Details</ion-button>
 
 
     <ion-button expand="block" type="button" (click)="logout()">Log out</ion-button>

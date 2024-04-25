@@ -8,7 +8,12 @@
 <ion-content class="ion-padding" [fullscreen]="true">
   <div style="display: flex; flex-direction: column; height: 100%; justify-content: space-around; align-items: center;">
     <div style="text-align: center;">
-      A crash has been detected. Please dismiss this alert before the countdown, otherwise your emergency contact will be alerted.
+     <h2>A crash has been detected at the following co-ordinates. 
+      Please dismiss this alert before the countdown, otherwise your emergency contact will be alerted.</h2> 
+    </div>
+    <div style="text-align: center;">
+      <h1>Latidude: {{latitude}}</h1>
+      <h1>Longitude: {{ longitude }}</h1>
     </div>
     <h1 style="margin: 0; font-size: 68px;">{{ countdown }} s</h1>
     <ion-button (click)="dismissModal()">Dismiss</ion-button>

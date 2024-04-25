@@ -24,7 +24,7 @@ export class UserProfileUpdateModalPage implements OnInit {
     year: '',
     part: '',
     serviceDoneDate: '',
-    profileImageUrl: ''
+    emergencyNumber: '',
   };
 
   constructor(

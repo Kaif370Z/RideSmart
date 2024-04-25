@@ -10,6 +10,8 @@ import { DeviceMotion, DeviceMotionAccelerationData, DeviceMotionAccelerometerOp
 import { Gyroscope, GyroscopeOptions, GyroscopeOrientation } from '@ionic-native/gyroscope/ngx';
 import { HEREService } from '../services/here.service';
 import { SensorFusionService } from '../services/sensor-fusion.service';
+import { locationUpdates } from '../services/location.service';
+
 
 declare var google: {
   maps: {
@@ -208,6 +210,8 @@ export class driveTabPage {
   lastPosition: Position | null = null;
   movementThreshold = 10;
 
+  
+
   startTracking1() {
     const watchOptions = {
       enableHighAccuracy: true,
@@ -217,6 +221,7 @@ export class driveTabPage {
 
     Geolocation.watchPosition(watchOptions, (position, err) => {
       if (position) {
+        
         if (this.lastPosition) {
           // Calculate the distance between the last and current position
           const distance = this.calculateDistance(
@@ -226,6 +231,8 @@ export class driveTabPage {
             position.coords.longitude
           );
 
+          locationUpdates.next({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+          
           //if the distance is between last point is 0.3 consider the speed 0
           if (distance < 0.3) {
             this.kmh = 0;
@@ -253,7 +260,8 @@ export class driveTabPage {
         }
         waypoints.push({ latitude: position.coords.latitude, longitude: position.coords.longitude });
 
-        
+      
+
         this.currentHeading = position.coords.heading ?? 0;
         console.log("Current Heading" , this.currentHeading);
         this.checkSpeedLimitsForRoute(waypoints)
@@ -348,6 +356,10 @@ export class driveTabPage {
 
   startMonitoringCrash() {
     this.crashDetectionService.startMonitoring();
+  }
+
+  open(){
+    this.crashDetectionService.presentCrashModal();
   }
 
 }

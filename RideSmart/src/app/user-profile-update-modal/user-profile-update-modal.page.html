@@ -32,6 +32,11 @@
     <ion-input [(ngModel)]="userData.serviceDoneDate" type="text"></ion-input>
   </ion-item>
 
+  <ion-item>
+    <ion-label position="floating">Emergency Number</ion-label>
+    <ion-input [(ngModel)]="userData.emergencyNumber" type="text"></ion-input>
+  </ion-item>
+
   <ion-button *ngIf="user" (click)="updateProfile()">Update Profile</ion-button>
 
   <ion-fab-button (click)="addPhotoToGallery()">

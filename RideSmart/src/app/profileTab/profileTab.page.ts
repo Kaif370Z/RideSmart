@@ -26,7 +26,8 @@ export class profileTabPage implements OnInit {
     model: '',
     year: '',
     part: '',
-    serviceDoneDate: ''
+    serviceDoneDate: '',
+    emergencyNumber: '',
   };
 
   constructor(
