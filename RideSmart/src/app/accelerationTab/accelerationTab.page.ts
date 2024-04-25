@@ -68,7 +68,7 @@ export class accelerationTabPage {
         };
         
         if (this.startTime === null && this.kmh > 0) {
-          //start timer when moved is detected
+          //start timer when move is detected
           this.startTime = Date.now();
         }
 
@@ -113,9 +113,7 @@ export class accelerationTabPage {
     return degrees * (Math.PI / 180);
   }
 
-  
-
   startMonitoringCrash() {
-    this.crashDetectionService.presentCrashModal();
+    this.crashDetectionService.startMonitoring();
   }
 }

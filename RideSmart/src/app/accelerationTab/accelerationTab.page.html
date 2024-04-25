@@ -11,7 +11,7 @@
     <h1 style="margin: 0; font-size: 68px; ">{{ kmh | number:'1.0-0' }} km/h</h1>
   </div>
   <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 5%; padding-top: 5%;">
-    <h1 style="margin: 0; font-size: 48px; ">24.23 Sec</h1>
+    <h1 style="margin: 0; font-size: 48px; ">{{}}</h1>
   </div>
 
   <div class="button-container" style="padding-bottom: 25px;">
@@ -20,6 +20,7 @@
     </ion-item>
     <!-- Buttons to start acceleration timer -->
     <ion-button (click) = "startTracking()">GO!</ion-button>
+    <p> {{ timeTaken}}</p>
   </div>
   <div>
     <ion-card>
