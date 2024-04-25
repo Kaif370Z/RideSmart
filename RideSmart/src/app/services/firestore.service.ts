@@ -34,5 +34,17 @@ export class FirestoreService {
       map((routes: any) => routes)
     );
   }
+
+  async addAccelerationData(userId: string, data: any): Promise<void> {
+    const dataCollectionRef = collection(this.firestore, `users/${userId}/accelerations`);
+    await addDoc(dataCollectionRef, data);
+  }
+
+  getAccelerationData(userId: string): Observable<any[]> {
+    const dataRef = collection(this.firestore, `users/${userId}/accelerations`);
+    return collectionData(dataRef, { idField: 'id' }).pipe(
+      map(data => data)
+    );
+  }
   
 }

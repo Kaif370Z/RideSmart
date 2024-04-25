@@ -11,22 +11,36 @@
     <h1 style="margin: 0; font-size: 68px; ">{{ kmh | number:'1.0-0' }} km/h</h1>
   </div>
   <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 5%; padding-top: 5%;">
-    <h1 style="margin: 0; font-size: 48px; ">{{}}</h1>
+    <h1 style="margin: 0; font-size: 48px; ">{{min}} : </h1>
+    <h1 style="margin: 0; font-size: 48px; ">{{sec}} : </h1>
+    <h1 style="margin: 0; font-size: 48px; ">{{ms}} </h1>
+    <!-- <span>{{min}} : </span>
+    <span>{{sec}} : </span>
+    <span>{{ms}}</span> -->
   </div>
 
   <div class="button-container" style="padding-bottom: 25px;">
-    <ion-item>
+    <ion-item style = "padding-left: 3%;">
       <ion-input type="number" placeholder="Enter Speed" [(ngModel)]="targetSpeed" ></ion-input>
     </ion-item>
     <!-- Buttons to start acceleration timer -->
     <ion-button (click) = "startTracking()">GO!</ion-button>
-    <p> {{ timeTaken}}</p>
+    <ion-button (click) = "reset()">Reset</ion-button>
+
   </div>
-  <div>
+
+  <!-- <div *ngFor="let time of times">
+    <div>Target Speed: {{ time.targetSpeed }} km/h</div>
+    <div>Time Elapsed: {{ time.timeElapsed.minutes }}:{{ time.timeElapsed.seconds }}.{{ time.timeElapsed.milliseconds }}</div>
+    <div>Recorded At: {{ time.timestamp | date: 'medium' }}</div>
+  </div> -->
+
+
+  <div *ngFor="let time of times">
     <ion-card>
       <ion-row>
-        <ion-col>23</ion-col>
-        <ion-col>200</ion-col>
+        <ion-col>Target Speed: {{ time.targetSpeed }} km/h</ion-col>
+        <ion-col>Time Elapsed: {{ time.timeElapsed.minutes }}:{{ time.timeElapsed.seconds }}.{{ time.timeElapsed.milliseconds }}</ion-col>
       </ion-row>
     </ion-card>
   </div>
