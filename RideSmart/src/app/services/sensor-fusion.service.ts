@@ -11,7 +11,7 @@ export class SensorFusionService {
 
   constructor(private gyroscope: Gyroscope, private deviceMotion: DeviceMotion) {}
 
-  //kalman filter
+  //method to applying kalman filter to fuse gyro and accel readings
   private kalmanFilter(currentEstimate :number, newMeasurement:number, kFactor :number = 0.5) {
     return currentEstimate + kFactor * (newMeasurement - currentEstimate);
   }
@@ -28,7 +28,7 @@ export class SensorFusionService {
     }
 
     this.gyroscope.watch(gyroOptions).subscribe((orientation: GyroscopeOrientation) => {
-      //angular velocity along the x axis in degrees per second
+      //angular velocity along the y axis in degrees per second
       const gyroAngleChange = orientation.y;
       //seconds corresponding to gyroscope options
       const deltaTime = 0.1; 

@@ -94,13 +94,13 @@ export class driveTabPage {
   }
 
   ngOnInit() {
-    // this.watchSpeed(); 
+    //start lean angle tracking
     this.sensorFusionService.startSensors();
   }
 
   getAngle() {
     const angle = this.sensorFusionService.getCurrentAngle();
-    console.log(`Current lean angle: ${angle}`);
+    console.log(`lean angle: ${angle}`);
     return angle;
   }
 
@@ -174,7 +174,7 @@ export class driveTabPage {
     } else if (leanAngle >= 20 && leanAngle < 40) {
       return 'orange';
     } else if (leanAngle >= 40) {
-      return 'red';
+      return 'red';  
     } else if (leanAngle >= -40 && leanAngle < -20) {
       return 'orange';
     } else if (leanAngle < -40) {
@@ -246,7 +246,7 @@ export class driveTabPage {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
-        // Generate waypoints for the speed limit check
+        //creating an array of waypoints for the speed limit check
         let waypoints = [];
         if (this.lastPosition) {
           waypoints.push({ latitude: this.lastPosition.latitude, longitude: this.lastPosition.longitude });
@@ -324,7 +324,7 @@ export class driveTabPage {
   }
 
 
-  //Applying Haverstine Formula
+  //calculating the distance between two points on the planets spherical surface
   calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const earthRadiusKm = 6371;
 
@@ -349,6 +349,7 @@ export class driveTabPage {
   startMonitoringCrash() {
     this.crashDetectionService.startMonitoring();
   }
+
 }
 
 

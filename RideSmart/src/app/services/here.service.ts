@@ -12,6 +12,7 @@ export class HEREService {
 
   constructor(private http: HttpClient) {}
 
+  //getting speed limit using HERE api based on geolocation co-ordinates
   getSpeedLimits(waypoints: { latitude: number; longitude: number }[]): Observable<any> {
     const waypointParams = waypoints.map((wp, index) => `waypoint${index}=geo!${wp.latitude},${wp.longitude}`).join('&');
     const attributes = 'SPEED_LIMITS_FCn(*)';
@@ -21,8 +22,4 @@ export class HEREService {
     return this.http.get(url);
   }
 
-  // getSpeedLimit(): Observable<any> {
-  //   const url = `https://routematching.hereapi.com/v8/match/routelinks?apikey=7qMxcTBNEwK_4WkK7lfrSF5McQoSwZxXiiTww0AQ2KQ&waypoint0=42.0272,-87.9623&waypoint1=42.0294,-87.9652&mode=fastest;car&routeMatch=1&attributes=SPEED_LIMITS_FCn(*)`;
-  //   return this.http.get(url);
-  // }
 }

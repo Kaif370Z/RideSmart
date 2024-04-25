@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { SMS } from '@ionic-native/sms/ngx';
+import { CrashDetectionService } from '../services/crash-detection.service';
 
 @Component({
   selector: 'app-crash-modal',
@@ -12,7 +13,7 @@ export class CrashModalPage implements OnInit {
   countdown: number = 30;
   private countdownInterval: any;
 
-  constructor(private modalController: ModalController, private sms: SMS) {}
+  constructor(private modalController: ModalController, private sms: SMS, private crashDetectionService: CrashDetectionService) {}
 
   //call startCountdown() when the modal opens
   ngOnInit() {
@@ -35,6 +36,7 @@ export class CrashModalPage implements OnInit {
   dismissModal() {
     clearInterval(this.countdownInterval);
     this.modalController.dismiss();
+    this.crashDetectionService.resetModalCount();
   }
 
   //send message to emergency contact

@@ -8,14 +8,18 @@
 
 <ion-content style="height: absolute">
   <div style="display: flex; justify-content: center; align-items: center; height: 200px; width: 100%;">
+    <!-- svg element that draws the semi circle and needle for the lean angle scale -->
     <svg width="350" height="350" viewBox="50 100 300 100">
-      <!-- Semi-circle Arc -->
+      <!-- semi circle -->
+      <!-- getArrowColor dynamically sets the color of the semi circle -->
       <path d="M 100,200 A 100,100 0 0,1 300,200"
             fill="none"
             [attr.stroke]="getArrowColor(getAngle())"
             stroke-width="10" />
 
-      <!-- Needle -->
+      <!-- needle-->
+      <!-- the transform attribute rotates the needle based on the lean angle returned by getAngle() -->
+      <!-- getArrowColor dynamically sets the color of the needle -->
       <line x1="200" y1="200" x2="200" y2="100"
             [attr.transform]="'rotate(' + (-getAngle()) + ', 200, 200)'"
             [attr.stroke]="getArrowColor(getAngle())"
@@ -25,10 +29,10 @@
   <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 25px;">
     <h1 [ngClass]="getSpeedWarning().class" [ngStyle]="getSpeedWarning()" style="margin: 0; font-size: 68px; ">{{ kmh | number:'1.0-0' }} km/h</h1>
   </div>
-  <p> {{getAngle()}}</p>
+  <!-- <p> {{getAngle()}}</p> -->
 
   <div class="button-container" style="padding-bottom: 25px;">
-    <!-- Buttons to start/stop accelerometer and gyroscope -->
+    <!-- buttons to start/stop gps tracking and crash monitoring -->
     <ion-button (click)="startTracking1();startMonitoringCrash()">Start</ion-button>
     <ion-button (click)="stopAccel();stopGyro()">Stop</ion-button>
   </div>
