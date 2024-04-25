@@ -20,14 +20,14 @@
 
   
 
-  <button ion-button full icon-left (click)="startTracking()" *ngIf="!trackingService.isTracking">
+  <button ion-button full icon-left (click)="startTracking()" *ngIf="!isTracking">
     <ion-icon name="locate"></ion-icon>
     Start Tracking
   </button>
 
   <div #mapElement style="height: 60%;"></div>
 
-  <button ion-button full icon-left (click)="stopTracking()" *ngIf="trackingService.isTracking">
+  <button ion-button full icon-left (click)="stopTracking()" *ngIf="isTracking">
     <ion-icon name="hand"></ion-icon>
     Stop Tracking
   </button>
@@ -46,7 +46,10 @@
   <ion-list>
     <ion-list-header>Previous Tracks</ion-list-header>
     <ion-item *ngFor="let route of routes; let i = index">
-      {{ route.finished.toDate() | date }}, {{ route.path.length }} Waypoints
+      Date: {{ route.finished.toDate() | date }},
+      Waypoints: {{ route.path.length }},
+      Distance: {{ route.totalDistance / 1000 | number:'1.2-2' }} km,
+      Duration: {{ formatDuration(route.duration) }}
       <button ion-button clear item-end (click)="showHistoryRoute(route.path)">View Route</button>
     </ion-item>
   </ion-list>
@@ -54,4 +57,3 @@
   
 
 </ion-content>
-
