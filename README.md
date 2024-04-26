@@ -26,7 +26,7 @@ To get RideSmart up and running on your local machine for development and testin
  * git clone https://github.com/Kaif370Z/RideSmart
 
  3. Once in the project folder, navigate to RideSmart
- $ cd RideSmart
+ * cd RideSmart
 
  4. Open a terminal in the current directory and execute the following command
  to complete rxjs package installation.–force is used to ignore a dependency
