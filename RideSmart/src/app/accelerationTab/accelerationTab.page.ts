@@ -100,7 +100,8 @@ export class accelerationTabPage {
           this.start();
         }
 
-        //when the target speed is reach, stop the timer and and clear the watch
+        //when the target speed is reached, stop the timer 
+        //and clear the watch
         if (this.kmh >= this.targetSpeed) {
           this.stop();
           console.log('acceleration reached');
@@ -128,13 +129,11 @@ export class accelerationTabPage {
       this.startTimer = setInterval(() => {
         this.ms++;
         this.ms = this.ms < 10 ? '0' + this.ms: this.ms;
-
         if(this.ms === 100){
           this.sec++;
           this.sec = this.sec < 10 ? '0' + this.sec : this.sec;
           this.ms= '0' + 0;
         }
-
         if(this.sec === 60){
           this.min++;
           this.min = this.min < 10 ? '0' + this.min : this.min;
@@ -143,13 +142,11 @@ export class accelerationTabPage {
       },10);
     }
   }
-
   //stop the timer
   stop() {
     clearInterval(this.startTimer);
     this.running = false;
     this.saveToFirestore();
-
   }
 
   //reset the timer to 0
@@ -165,8 +162,7 @@ export class accelerationTabPage {
     if (!this.user) {
       console.error("User is not logged in.");
       return;
-    }
-    
+    }  
     //creating new acceleration time entry containing speed and elapsed time
     const newTimeEntry = {
       targetSpeed: this.targetSpeed,
@@ -176,8 +172,7 @@ export class accelerationTabPage {
         milliseconds: this.ms
       },
       timestamp: new Date().toISOString()
-    };
-    
+    };  
     //using firestore service
     await this.firestore.addAccelerationData(this.user.uid, newTimeEntry);
   }

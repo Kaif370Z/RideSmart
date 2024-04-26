@@ -62,28 +62,12 @@ export class CrashModalPage implements OnInit {
     this.crashDetectionService.resetModalCount();
   }
 
-  // getLocation() {
-  //   const watchOptions = {
-  //     enableHighAccuracy: true,
-  //     timeout: 500,
-  //     maximumAge: 0
-  //   };
-  
-  //   Geolocation.getCurrentPosition(watchOptions).then((position) => {
-  //     this.latitude = position.coords.latitude;
-  //     this.longitude = position.coords.longitude;
-  //     console.log("position received:" ,this.latitude, this.longitude);
-  //   }).catch((error: any) => {
-  //     console.error("cant get crash location", error);
-  //   });
-  // }
-
   //send message to emergency contact
   notifyEmergencyContact() {
     //number to contact
     const emergencyNumber = this.emergencyNumber;
     //text message body
-    const message = 'I have been in a crash. Please notify the emergency services.';
+    const message = `I have been in a crash at the following coordinates: Latitude ${this.latitude}, Longitude ${this.longitude}. Please notify the emergency services.`;
     //intent: '' sends the message on android without any user interaction
     this.sms.send(emergencyNumber, message, {android: {intent: ''}})
       .then(() => {
