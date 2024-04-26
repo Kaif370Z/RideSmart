@@ -37,7 +37,7 @@ Follow these steps to install RideSmart:
  ```
  4. To build the application, use npm’s run build command
  ```bash
- * npm run build
+ npm run build
  ```
  5. Sync your Android Development environment command
  ```bash
