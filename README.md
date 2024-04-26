@@ -23,7 +23,7 @@ To get RideSmart up and running on your local machine for development and testin
 # Setup
  1. Run this command in a terminal environment to clone the repository to your
  machine
- $ git clone https://github.com/Kaif370Z/RideSmart
+ * git clone https://github.com/Kaif370Z/RideSmart
 
  3. Once in the project folder, navigate to RideSmart
  $ cd RideSmart
@@ -31,18 +31,18 @@ To get RideSmart up and running on your local machine for development and testin
  4. Open a terminal in the current directory and execute the following command
  to complete rxjs package installation.–force is used to ignore a dependency
  conflict.
- $ npm i rxjs--force
+ * npm i rxjs--force
 
  5. To build the application, use npm’s run build command
- $ npm run build
+ * npm run build
 
  6. Sync your Android Development environment command
- $ npx cap sync android
+ * npx cap sync android
 
  8. Open the app in Android Studio
- $ npx cap open android
+ * npx cap open android
 
  10. If you wish to run the app in a web browser
- $ ionic serve
+ * ionic serve
 
 
