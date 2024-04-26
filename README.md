@@ -1,7 +1,5 @@
 # RideSmart
 
-
-# Description
 RideSmart is a mobile application that aims to empower the owners of older motorbikes with features that are currently only available to owners of newer models. Manufacturers have begun equipping their newest models with a CCU (Communication Control Unit) that gives the driver a range of useful information and features like lean angle warnings, acceleration timers, route trackers and more.
 Our application offers these features to bikers without a CCU equipped motorbike by accessing their mobile device's native features, namely the gyroscope, accelerometer and GPS.
 
@@ -9,7 +7,8 @@ Our application offers these features to bikers without a CCU equipped motorbik
 * Real-time Tracking: Receive Information such as current speed, current speed limit, lean angle and compass heading.
 * Crash Detection: A crash detection system detects potential crashes and alerts your emregency contact.
 * Route Tracking: GPS tracking is used draw your route and provide you with journey statistics.
-* Accleration Timing: Measure acceleration times and store them to compare at a later date.
+* Acceleration Timing: Measure acceleration times and store them to compare at a later date.
+* User Creation and Authentication: Create a profile for storing your data.
 
 # Installation
 Follow these steps to install RideSmart:
